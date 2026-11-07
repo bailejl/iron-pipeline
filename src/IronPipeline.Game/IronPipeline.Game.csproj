@@ -1,4 +1,4 @@
-<Project Sdk="Godot.NET.Sdk/4.7.0">
+<Project Sdk="Godot.NET.Sdk/4.7.2">
   <!--
     Presentation layer only. Game rules live in IronPipeline.Sim.
     Godot may rewrite parts of this file on first open; keep the Sim reference and the TFM.
