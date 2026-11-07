@@ -38,7 +38,7 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 - Namespaces mirror folders: `IronPipeline.Sim.Hex`, `IronPipeline.Sim.Supply`, …
 - Public Sim API is small and intention-revealing: `GameState`, `Command`s, `Rules.Apply`, queries. Domain language: hex, unit, stack, ZOC, supply line, depot, truck, MP (movement points), fuel, ammo.
 - Specs: numbers in the spec's Numbers table, then in `content/`, never inline in code.
-- Assets: any binary in `assets/` must have an entry in `assets-src/manifest.yaml` (tool, model, prompt, seed, license). No entry → CI fails.
+- Assets: any binary in `assets/` must have an entry in `assets-src/manifest.yaml` (license, commercial_ok, approval; plus tool, model, prompt_file, seed when generated — see the `asset-pipeline` skill). No entry → CI fails.
 
 ## Repo map
 ```
@@ -47,7 +47,7 @@ src/IronPipeline.Tools      replay/validate/selfplay CLI
 src/IronPipeline.Game       Godot 4.7 project (opens with Godot .NET; Godot generates its own .sln here)
 docs/gdd.md  docs/adr/  docs/specs/  docs/playtest/
 content/  assets/  assets-src/  scripts/  .github/workflows/
-.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, godot-presentation, playtest-checklist
+.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, godot-presentation, asset-pipeline, playtest-checklist
 .claude/agents/   isolated read-only reviewers that preload those skills
 ```
 
