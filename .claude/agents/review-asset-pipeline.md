@@ -1,6 +1,6 @@
 ---
 name: review-asset-pipeline
-description: Code reviewer: every new binary under assets/ is LFS-tracked, listed in assets-src/manifest.yaml with tool, model, prompt, seed and license, and import-ready for Godot. Run on any PR adding or changing assets.
+description: Code reviewer: every new binary under assets/ is LFS-tracked, listed in assets-src/manifest.yaml with a complete provenance entry, and import-ready for Godot. Run on any PR adding or changing assets.
 tools: Read, Grep, Glob, Bash
 model: haiku
 skills:

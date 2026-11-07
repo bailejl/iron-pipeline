@@ -15,7 +15,7 @@ description: Rules for files under assets/ in Iron Pipeline — Git LFS tracking
 | `assets-src/out/` | raw generation scratch; gitignored, never committed |
 
 ## Git LFS
-Every new binary under `assets/` is LFS-tracked. `.gitattributes` routes these through LFS: `*.png *.jpg *.webp *.ogg *.wav *.mp3 *.ttf *.otf`.
+Every new binary under `assets/` must be LFS-tracked. `.gitattributes` routes these through LFS: `*.png *.jpg *.webp *.ogg *.wav *.mp3 *.ttf *.otf`.
 - Verify a file: `git check-attr filter <file>` must print `filter: lfs`.
 - A binary type not in that list needs a `.gitattributes` line to be LFS-tracked.
 
@@ -29,15 +29,15 @@ Every new binary under `assets/` is LFS-tracked. `.gitattributes` routes these t
 | `source` | `generated`, `purchased`, `handmade`, `public-domain` |
 | `tool` | for generated, e.g. `ComfyUI` |
 | `model` | for generated, e.g. `z-image-turbo-fp8` |
-| `prompt_file` | e.g. `prompts/units/mbt-ridgeback.txt` |
-| `seed` | e.g. `123456` |
+| `prompt_file` | for generated, e.g. `prompts/units/mbt-ridgeback.txt` |
+| `seed` | for generated, e.g. `123456` |
 | `post` | post-processing, e.g. `"background removed, 128x128, palette locked"` |
 | `license` | `all-rights-reserved`, `CC0`, or `<tool license>` |
 | `commercial_ok` | `true` / `false` |
 | `approved_by` | e.g. `jl` |
 | `approved_on` | date |
 
-Root `CLAUDE.md` requires tool, model, prompt, seed and license on every entry.
+Required on every entry: `path`, `kind`, `source`, `license`, `commercial_ok`, `approved_by`, `approved_on`. Also required when `source: generated`: `tool`, `model`, `prompt_file`, `seed`.
 
 The license must permit commercial use, or the entry must say otherwise (`commercial_ok`).
 

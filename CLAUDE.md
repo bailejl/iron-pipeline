@@ -38,7 +38,7 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 - Namespaces mirror folders: `IronPipeline.Sim.Hex`, `IronPipeline.Sim.Supply`, …
 - Public Sim API is small and intention-revealing: `GameState`, `Command`s, `Rules.Apply`, queries. Domain language: hex, unit, stack, ZOC, supply line, depot, truck, MP (movement points), fuel, ammo.
 - Specs: numbers in the spec's Numbers table, then in `content/`, never inline in code.
-- Assets: any binary in `assets/` must have an entry in `assets-src/manifest.yaml` (tool, model, prompt, seed, license). No entry → CI fails.
+- Assets: any binary in `assets/` must have an entry in `assets-src/manifest.yaml` (license, commercial_ok, approval; plus tool, model, prompt_file, seed when generated — see the `asset-pipeline` skill). No entry → CI fails.
 
 ## Repo map
 ```
