@@ -6,7 +6,7 @@
     AND in ../../Directory.Build.props so Sim and Game agree.
   -->
   <PropertyGroup>
-    <!-- Literal on purpose: Godot 4.7 headless import rewrites this project to net8.0 otherwise (NU1201 in CI).
+    <!-- Literal on purpose: after Godot 4.7 headless import, $(IronPipelineTfm) resolved to net8.0 in CI (NU1201); file itself is not rewritten.
          Keep in sync with IronPipelineTfm in ../../Directory.Build.props. -->
     <TargetFramework>net10.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
