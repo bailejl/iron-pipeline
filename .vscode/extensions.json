@@ -1,1 +1,8 @@
-{ "recommendations": ["ms-dotnettools.csdevkit", "geequlim.godot-tools", "alexkrechik.cucumberautocomplete"] }
+{
+  "recommendations": [
+    "ms-dotnettools.csdevkit",
+    "geequlim.godot-tools",
+    "alexkrechik.cucumberautocomplete",
+    "repowise-dev.repowise"
+  ]
+}

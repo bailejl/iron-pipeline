@@ -1,0 +1,17 @@
+{
+  "detected": "2026-11-07",
+  "stacks": ["csharp", "dotnet"],
+  "frameworks": ["godot", "xunit", "fscheck"],
+  "packageManager": "nuget",
+  "hasDocker": false,
+  "indicators": {
+    "IronPipeline.sln": true,
+    "global.json": true,
+    "*.csproj": true,
+    "Directory.Build.props": true,
+    "package.json": false,
+    "tsconfig.json": false,
+    "pyproject.toml": false,
+    "pom.xml": false
+  }
+}
