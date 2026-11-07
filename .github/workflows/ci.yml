@@ -1,0 +1,47 @@
+name: ci
+# Every push/PR. Linux only, headless, no Godot editor needed for the Sim gates.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sim:
+    name: sim (format, build, test, boundary, determinism)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: scripts/verify.sh
+
+  godot:
+    name: godot (import + GdUnit4)
+    runs-on: ubuntu-latest
+    needs: sim
+    # Enable once the Game project has GdUnit4 tests (spec 000X). Until then it only imports.
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: true
+          include-templates: false
+      - name: Restore and build Game
+        working-directory: src/IronPipeline.Game
+        run: |
+          dotnet restore
+          godot --headless --import 2>&1 | tail -20
+          dotnet build -c Release --nologo
+      # - name: GdUnit4
+      #   run: godot --headless --path src/IronPipeline.Game -s addons/gdUnit4/bin/GdUnitCmdTool.gd --run-tests

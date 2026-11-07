@@ -1,0 +1,16 @@
+# Provenance manifest. One entry per file under assets/. Enforced by scripts/check-asset-manifest.sh.
+# This doubles as the Steam AI-generated-content disclosure record.
+#
+# - path: units/mbt-ridgeback.png        # relative to assets/
+#   kind: sprite | tile | icon | music | sfx | voice | font
+#   source: generated | purchased | handmade | public-domain
+#   tool: ComfyUI                        # for generated
+#   model: z-image-turbo-fp8             # for generated
+#   prompt_file: prompts/units/mbt-ridgeback.txt
+#   seed: 123456
+#   post: "background removed, 128x128, palette locked"
+#   license: all-rights-reserved | CC0 | <tool license>
+#   commercial_ok: true
+#   approved_by: jl
+#   approved_on: 2026-11-xx
+assets: []

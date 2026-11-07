@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IronPipeline.Sim</RootNamespace>
+    <Description>Engine-independent simulation for Iron Pipeline. Must never reference Godot.</Description>
+  </PropertyGroup>
+</Project>

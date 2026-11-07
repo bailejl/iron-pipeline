@@ -1,0 +1,20 @@
+name: release
+# Human-only: triggered by a version tag you push. Agents never tag (Agentic CD constraint 7).
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: export
+      - name: Publish (placeholder)
+        run: |
+          echo "Add itch.io butler push here first; steamcmd later."
+          ls -R export

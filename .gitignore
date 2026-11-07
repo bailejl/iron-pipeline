@@ -1,0 +1,23 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+StrykerOutput/
+# Godot
+.godot/
+.mono/
+*.import.tmp
+export/
+*.translation
+# OS / editors
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+# Claude Code local
+.claude/settings.local.json
+# Generation scratch (never commit raw generation output)
+assets-src/out/

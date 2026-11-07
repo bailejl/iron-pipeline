@@ -1,0 +1,23 @@
+name: nightly
+# Self-play balance report and long-game soak. Enable the steps when Tools implements them.
+on:
+  schedule:
+    - cron: '41 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  selfplay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet build IronPipeline.sln -c Release --nologo
+      - name: Self-play (placeholder until implemented)
+        run: dotnet run --project src/IronPipeline.Tools -c Release --no-build -- selfplay | tee selfplay-report.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: selfplay-report
+          path: selfplay-report.md
+          retention-days: 14
