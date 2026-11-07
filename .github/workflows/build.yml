@@ -27,6 +27,10 @@ jobs:
         working-directory: src/IronPipeline.Game
         run: |
           dotnet restore
+          # Godot's .NET export requires <assembly_name>.sln next to project.godot; the editor
+          # normally generates it, so create it here instead of committing one.
+          dotnet new sln -n IronPipeline.Game --format sln --force
+          dotnet sln IronPipeline.Game.sln add IronPipeline.Game.csproj
           godot --headless --import 2>&1 | tail -5
           mkdir -p ../../export/linux ../../export/windows ../../export/macos
           godot --headless --export-release "Linux"   ../../export/linux/iron-pipeline.x86_64
