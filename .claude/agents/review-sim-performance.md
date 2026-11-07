@@ -2,7 +2,7 @@
 name: review-sim-performance
 description: Code reviewer: big-map performance in Sim — allocations in per-hex loops, O(n²) over units, pathfinding without caching, LINQ in hot paths. Run on Sim changes that touch map, pathfinding, supply tracing or AI.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: sonnet
 skills:
   - wargame-domain
 ---

@@ -2,7 +2,7 @@
 name: review-determinism
 description: Code reviewer: find nondeterminism in Sim — unseeded Random, DateTime/Stopwatch, float/double in rules, Dictionary/HashSet iteration order, Parallel.*, LINQ over unordered sets without OrderBy. Run on every Sim change.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: sonnet
 skills:
   - determinism-rules
 ---

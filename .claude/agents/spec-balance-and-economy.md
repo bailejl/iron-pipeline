@@ -2,7 +2,7 @@
 name: spec-balance-and-economy
 description: Spec reviewer: are the numbers present, bounded and testable in AI self-play? Which existing units/rules does this invalidate? Use on every feature spec before human approval.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: opus
 skills:
   - wargame-domain
   - spec-format

@@ -2,7 +2,7 @@
 name: review-content-schema
 description: Code reviewer: content/**/*.yaml matches content/schemas, stats within declared ranges, every referenced id exists, numbers match the spec's Numbers table. Run on any content or schema change.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: haiku
 skills:
   - wargame-domain
   - spec-format
