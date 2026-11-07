@@ -6,8 +6,9 @@
     AND in ../../Directory.Build.props so Sim and Game agree.
   -->
   <PropertyGroup>
-    <!-- Pin explicitly: CI (Godot 4.7 import + build) resolved this project to net8.0 without it (NU1201). -->
-    <TargetFramework>$(IronPipelineTfm)</TargetFramework>
+    <!-- Literal on purpose: `godot --import` (4.7) rewrites this project to net8.0 otherwise (NU1201 in CI).
+         Keep in sync with IronPipelineTfm in ../../Directory.Build.props. -->
+    <TargetFramework>net10.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>IronPipeline.Game</RootNamespace>
   </PropertyGroup>
