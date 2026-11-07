@@ -6,7 +6,7 @@
     AND in ../../Directory.Build.props so Sim and Game agree.
   -->
   <PropertyGroup>
-    <!-- Godot.NET.Sdk defaults to net8.0, overriding Directory.Build.props; pin to the shared TFM. -->
+    <!-- Pin explicitly: CI (Godot 4.7 import + build) resolved this project to net8.0 without it (NU1201). -->
     <TargetFramework>$(IronPipelineTfm)</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>IronPipeline.Game</RootNamespace>

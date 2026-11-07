@@ -28,10 +28,10 @@ assets-src/out/
 .claude/plans/
 /.dev-team-reports/*
 !/.dev-team-reports/test-improve/
-memory/
-reports/
-metrics/
-plans/
+/memory/
+/reports/
+/metrics/
+/plans/
 .pr-review-passed
 
 # dev-team hygiene — machine-specific MCP config (absolute-path pollution — issues #1376, #1416)
