@@ -47,7 +47,7 @@ src/IronPipeline.Tools      replay/validate/selfplay CLI
 src/IronPipeline.Game       Godot 4.7 project (opens with Godot .NET; Godot generates its own .sln here)
 docs/gdd.md  docs/adr/  docs/specs/  docs/playtest/
 content/  assets/  assets-src/  scripts/  .github/workflows/
-.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, godot-presentation, playtest-checklist
+.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, godot-presentation, asset-pipeline, playtest-checklist
 .claude/agents/   isolated read-only reviewers that preload those skills
 ```
 
