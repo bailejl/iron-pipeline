@@ -2,7 +2,7 @@
 name: review-engine-boundary
 description: Code reviewer: enforce that IronPipeline.Sim has no Godot references and IronPipeline.Game has no game rules. Run after deterministic gates on every feature PR.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: haiku
 skills:
   - godot-presentation
   - wargame-domain

@@ -2,7 +2,7 @@
 name: spec-determinism-and-replay
 description: Spec reviewer: can every behavior be expressed as Commands applied to state, with no hidden state, wall-clock time, or floats? Use on every feature spec before human approval.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: sonnet
 skills:
   - determinism-rules
   - spec-format

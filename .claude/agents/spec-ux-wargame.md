@@ -2,7 +2,7 @@
 name: spec-ux-wargame
 description: Spec reviewer: how does the player see and act on this in two clicks or fewer, using hex-wargame UI conventions (selection, stacks, overlays, end turn)? Use on feature specs that touch the Godot layer.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: sonnet
 skills:
   - wargame-domain
   - spec-format

@@ -2,7 +2,7 @@
 name: review-save-and-replay-compat
 description: Code reviewer: state-shape changes come with a save/replay version bump or migration; golden replays are updated intentionally with a note, never silently. Run on any change to GameState, Commands or serialization.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: sonnet
 skills:
   - determinism-rules
 ---

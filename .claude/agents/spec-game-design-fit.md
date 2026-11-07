@@ -2,7 +2,7 @@
 name: spec-game-design-fit
 description: Spec reviewer: does this feature serve the GDD pillars (logistics tension, big maps, readable tactics, distinct factions)? Flags feature creep and anti-goals. Use on every feature spec before human approval.
 tools: Read, Grep, Glob, Bash
-model: inherit
+model: opus
 skills:
   - wargame-domain
   - spec-format
