@@ -11,7 +11,7 @@ repo states — and process drift (Cucumber removed, local skills still describi
 
 ## Decision
 0. We do not use `/dev-team:specs`; the Spec template replaces it (its default output path would collide with
-   `docs/specs/`). `/dev-team:plan` is always run with `--output plans/NNNN-<name>.md`, takes the approved Features file as input and copies its scenarios verbatim (same S-IDs) into the slices; a new scenario is a spec-change for the human. Set `Gherkin persistence: plan-file-only` so no Gherkin copies are exported under `features/`. `/dev-team:build` is used as is.
+   `docs/specs/`). `/dev-team:plan` is always run with `--output plans/NNNN-<name>.md`, takes the approved Features file as input and copies its scenarios into the slices with the same S-IDs and the same Given/When/Then steps (the plan may add `# Still passes if:` comment lines, which the plugin requires); a new or changed scenario is a spec-change for the human, and the Features file wins on any difference. Before running it, pre-seed `plans/NNNN-<name>.md` with the line `**Gherkin persistence**: plan-file-only` (otherwise the plugin auto-detects `features/` and exports a second Gherkin set there). `/dev-team:build` is used as is.
 1. Three artifacts with fixed names: **Spec** `docs/specs/NNNN-<name>.md` (intent, Numbers with tolerances,
    Decisions & Ambiguity Log, ACs, Size, Budget, consistency gate); **Features** `features/NNNN-<name>.feature`
    (Gherkin only); **Plan** `plans/NNNN-<name>.md` (`/dev-team:plan`, planned-size only).

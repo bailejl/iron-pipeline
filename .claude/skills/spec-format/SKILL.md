@@ -10,7 +10,7 @@ Three artifacts, three names, never mixed. The words "spec", "features" and "pla
 |---|---|---|---|
 | **Spec** | `docs/specs/NNNN-<name>.md` | intent, scope, **Numbers** (with tolerances), **Decisions & Ambiguity Log**, ACs, commands/state, presentation, consistency gate, **Size**, **Budget** | human approves (Gate 1) |
 | **Features** | `features/NNNN-<name>.feature` | Gherkin scenarios only; each becomes one test | human approves with the Spec |
-| **Plan** | `plans/NNNN-<name>.md` | slices, steps (IMPLEMENT/TEST/REFACTOR/Files/Commit), waves, Build Progress | produced by `/dev-team:plan`, human approves; **planned** size only; slices reuse the Features scenarios verbatim (no second Gherkin set) |
+| **Plan** | `plans/NNNN-<name>.md` | slices, steps (IMPLEMENT/TEST/REFACTOR/Files/Commit), waves, Build Progress | produced by `/dev-team:plan`, human approves; **planned** size only; slices copy the Features scenarios (same S-IDs and steps, plus `# Still passes if:` comments; Features wins on any difference) |
 
 Templates: `docs/specs/TEMPLATE.md`, `features/TEMPLATE.feature`. Worked example: 0001.
 
