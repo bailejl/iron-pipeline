@@ -40,7 +40,7 @@ for s in "${specs[@]:-}"; do
   [ -z "$s" ] && continue
   spec="docs/specs/$s"
   feat=$(grep -E '^\**Features:\**' "$spec" | head -1 | grep -oE 'features/[^ `)*]+' | head -1 || true)
-  if [ -z "$feat" ] || [ ! -f "$feat" ]; then fail "$spec: **Features:** must point at an existing file (got '${feat:-none}')"; fi
+  if [ "$feat" != "features/${s%.md}.feature" ]; then fail "$spec: **Features:** must be features/${s%.md}.feature (got '${feat:-none}')"; fi
   while IFS= read -r fol; do
     [ -z "$fol" ] && continue
     fid=$(printf '%s\n' "$fol" | grep -oE "${SPEC_ID_RE}" | head -1 || true)
