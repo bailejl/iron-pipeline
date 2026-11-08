@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Terrain type (content/terrain/<id>.yaml, one file per type; spec 0002)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "defense_modifier"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "passable": { "type": "boolean", "default": true },
+    "movement_cost": { "type": "integer", "minimum": 1, "maximum": 9, "description": "MP to enter; required when passable" },
+    "defense_modifier": { "type": "integer", "minimum": -50, "maximum": 100, "description": "percent" }
+  },
+  "if": { "properties": { "passable": { "const": false } }, "required": ["passable"] },
+  "else": { "required": ["movement_cost"] }
+}
