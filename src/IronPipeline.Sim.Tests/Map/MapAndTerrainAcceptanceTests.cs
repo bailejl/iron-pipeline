@@ -1,3 +1,4 @@
+using IronPipeline.Sim.Hex;
 using IronPipeline.Sim.Map;
 using IronPipeline.Sim.Tests.Fixtures;
 
@@ -28,6 +29,41 @@ public class MapAndTerrainAcceptanceTests
 
         Assert.Throws<ArgumentOutOfRangeException>(() => HexMap.Filled(0, 3, types, plains));
         Assert.Throws<ArgumentOutOfRangeException>(() => HexMap.Filled(4, -1, types, plains));
+    }
+
+    [Fact]
+    public void S03_EveryCellOfTheMapIsInBounds()
+    {
+        HexMap map = PlainsMap(5, 3);
+
+        for (int row = 0; row < 3; row++)
+        {
+            for (int column = 0; column < 5; column++)
+            {
+                Assert.True(map.InBounds(HexMap.HexAt(column, row)), $"column {column}, row {row}");
+            }
+        }
+
+        Assert.True(map.InBounds(new HexCoord(0, 0)));
+        Assert.True(map.InBounds(new HexCoord(3, 2)));
+    }
+
+    [Fact]
+    public void S04_HexesJustOutsideTheMapAreOutOfBounds()
+    {
+        HexMap map = PlainsMap(5, 3);
+
+        Assert.False(map.InBounds(new HexCoord(-1, 0)));
+        Assert.False(map.InBounds(new HexCoord(5, 0)));
+        Assert.False(map.InBounds(new HexCoord(0, -1)));
+        Assert.False(map.InBounds(new HexCoord(0, 3)));
+        Assert.False(map.InBounds(new HexCoord(100, 100)));
+    }
+
+    private static HexMap PlainsMap(int width, int height)
+    {
+        IReadOnlyList<TerrainType> types = TestContent.LoadTerrain();
+        return HexMap.Filled(width, height, types, types.Single(t => t.Id == "plains"));
     }
 
     [Fact]

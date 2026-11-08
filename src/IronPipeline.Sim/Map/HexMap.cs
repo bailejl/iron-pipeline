@@ -1,3 +1,5 @@
+using IronPipeline.Sim.Hex;
+
 namespace IronPipeline.Sim.Map;
 
 /// <summary>
@@ -44,6 +46,29 @@ public sealed class HexMap
         byte[] cells = new byte[width * height];
         Array.Fill(cells, (byte)fillIndex);
         return new HexMap(width, height, terrainTypes, cells);
+    }
+
+    /// <summary>The axial hex at offset column <paramref name="column"/>, row <paramref name="row"/> (no bounds check).</summary>
+    public static HexCoord HexAt(int column, int row) => new(column - ((row - (row & 1)) / 2), row);
+
+    public bool InBounds(HexCoord hex) => TryGetIndex(hex, out _);
+
+    private bool TryGetIndex(HexCoord hex, out int index)
+    {
+        index = -1;
+        if (hex.R < 0 || hex.R >= Height)
+        {
+            return false;
+        }
+
+        int column = hex.Q + ((hex.R - (hex.R & 1)) / 2);
+        if (column < 0 || column >= Width)
+        {
+            return false;
+        }
+
+        index = (hex.R * Width) + column;
+        return true;
     }
 
     private static int IndexOfType(IReadOnlyList<TerrainType> terrainTypes, TerrainType type)
