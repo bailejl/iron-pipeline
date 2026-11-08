@@ -6,6 +6,7 @@
 # No-op on main, on a branch with no spec number, or when the spec has no Budget line.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+source scripts/lib/spec-id.sh
 
 # Branch: local HEAD, or the PR head ref when CI checks out a detached HEAD.
 in_ci_pr=0
@@ -14,7 +15,7 @@ if [ "$branch" = "HEAD" ] && [ -n "${GITHUB_HEAD_REF:-}" ]; then branch="$GITHUB
 if [ "$branch" = "HEAD" ]; then echo "budget: n/a (detached HEAD, no GITHUB_HEAD_REF)"; exit 0; fi
 if [ "$branch" = "main" ]; then echo "budget: n/a (main)"; exit 0; fi
 
-num=$(printf '%s\n' "$branch" | grep -oE '(^|/)[0-9]{4}' | tr -d '/' | head -1 || true)
+num=$(spec_id_from_branch "$branch")
 if [ -z "$num" ]; then echo "budget: n/a (no spec number in branch '$branch')"; exit 0; fi
 
 spec=$(ls docs/specs/"$num"-*.md 2>/dev/null | head -1 || true)

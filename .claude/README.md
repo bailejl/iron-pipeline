@@ -9,6 +9,7 @@
 | `spec-format` | coding session (writing a Spec from the template), `spec-*` (incl. `spec-consistency`), `review-content-schema`, `review-process-drift` |
 | `test-conventions` | coding session, `review-determinism`, `review-save-and-replay-compat` |
 | `godot-presentation` | anyone touching `src/IronPipeline.Game`, `spec-ux-wargame`, `review-engine-boundary` |
+| `root-cause-fix` | coding session on any fix, `review-process-drift` |
 | `playtest-checklist` | invoked as `/playtest-checklist NNNN` once per planned-size, player-facing PR |
 
 **Agents** (`agents/*.md`) are isolated, read-only reviewers layered on the `dev-team` plugin's generic ones

@@ -11,5 +11,5 @@ Build: <CI run / commit>. Platform: <Mac / Bazzite native / Proton>.
 ## Feel (1–5): fun · clarity · tension
 -
 
-## Notes → new specs
+## Notes → defects (use the Defect template, `.github/ISSUE_TEMPLATE/defect.md`) and new specs
 -

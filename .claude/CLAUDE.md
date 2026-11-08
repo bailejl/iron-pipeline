@@ -10,12 +10,15 @@ Authoritative agent instructions live in the root `CLAUDE.md` (architecture rule
 
 ## Commands
 ```bash
-scripts/verify.sh                                   # format, build, test, boundary, determinism, asset-manifest, stale-refs, budget (CI runs this)
+scripts/verify.sh                                   # boundary, dependencies, spec-ids, determinism, asset-manifest, stale-refs, budget, format, build, test (CI runs this)
 dotnet format IronPipeline.sln                       # fix formatting
 dotnet build IronPipeline.sln -c Release
 dotnet test IronPipeline.sln -c Release --no-build
 scripts/check-engine-boundary.sh                     # Sim never references Godot
 scripts/check-determinism.sh                         # greppable determinism rules
+scripts/check-dependencies.sh                        # references match dependencies.allowed; Sim has none
+scripts/check-spec-ids.sh                            # spec id format, uniqueness, Spec<->Features links
+scripts/next-spec-id.sh                              # next free spec id
 ```
 
 ## dev-team plugin

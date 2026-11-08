@@ -15,6 +15,8 @@ Three artifacts, three names, never mixed. The words "spec", "features" and "pla
 Templates: `docs/specs/TEMPLATE.md`, `features/TEMPLATE.feature`. Worked example: 0001.
 
 ## Rules
+- **Spec id** = exactly four digits, allocated as max existing + 1 (`scripts/next-spec-id.sh`; run it when naming work), never reused, no suffixes or letters. A follow-up gets the next number and cites its parent in the Spec header as `**Follows:** NNNN`. `0000` is reserved for process-only branches (no Spec). The definition lives in `scripts/lib/spec-id.sh`; `scripts/check-spec-ids.sh` enforces names, uniqueness and Spec↔Features links.
+- **A new package, a new project, a new external file format, or hand-writing a parser/serializer for a standard format (YAML, JSON, CSV, TOML, XML) is always a `human` decision. Never inferable.** The allowlist is `dependencies.allowed`; changing it needs a `human` row in a Spec naming the package and why.
 - **On "approved", re-read the Spec and Features files from disk** before acting; the human may have edited them.
 - **Every change has a Spec and a Features file**, even a bug fix (a Spec can be ten lines; "no decisions" is a valid log).
 - **Numbers live in the Spec, with a tolerance or `exact`.** A value with no tolerance is not approvable. Values then go to `content/`, never into C#.

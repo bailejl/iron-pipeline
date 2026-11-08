@@ -23,7 +23,7 @@ while IFS= read -r line || [ -n "$line" ]; do
   fi
   set +e
   raw=$(grep "${flags[@]}" --include='*.md' --include='*.feature' --include='*.txt' --include='*.yml' \
-          --exclude-dir=adr --exclude-dir=research --exclude-dir=worktrees --exclude-dir=memory \
+          --exclude-dir=adr --exclude-dir=process --exclude-dir=research --exclude-dir=worktrees --exclude-dir=memory \
           -- "$term" "${targets[@]}" 2>&1); rc=$?
   set -e
   if [ $rc -ge 2 ]; then echo "check-stale-refs: grep failed for '$line': $raw" >&2; exit 2; fi

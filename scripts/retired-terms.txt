@@ -1,6 +1,7 @@
 # One entry per line. Plain lines are whole-word, case-insensitive fixed strings.
 # Lines starting with "re:" are extended regexes.
 # Grepped across CLAUDE.md, README.md, .claude/ (not worktrees/ or memory/), .github/, docs/ (not adr/ or research/), features/, plans/.
+# docs/process/ (input briefs, which quote retired forms on purpose) is excluded like adr/.
 # A line that must mention a retired term may carry:  retired: ok <reason>
 TDD
 test-first
@@ -22,3 +23,5 @@ re:\bevery feature\b
 # v4: small specs now get the spec-consistency reviewer (ADR 0006); fixed small budget replaced by scenarios + 3
 re:No spec reviewers
 re:defaults: small 6/1
+# v4.1: spec ids are exactly four digits; a suffixed id (0002b) is invalid in any process doc
+re:[0-9]{4}[a-z]\b

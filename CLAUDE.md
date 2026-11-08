@@ -6,11 +6,11 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 > If the `dev-team` plugin's `/setup` has appended its own section below, both apply; where they conflict, this section wins.
 
 ## Architecture rules (non-negotiable)
-1. **`src/IronPipeline.Sim` never references Godot.** No `using Godot`, no Godot types, no Godot NuGet. All game rules live here. `scripts/check-engine-boundary.sh` enforces it.
+1. **`src/IronPipeline.Sim` never references Godot, packages or projects.** No `using Godot`, no Godot types, no NuGet package, no `ProjectReference`. All game rules live here. `scripts/check-engine-boundary.sh` and `scripts/check-dependencies.sh` enforce it.
 2. **The Godot project (`src/IronPipeline.Game`) contains no rules.** It renders Sim state and submits `Command`s.
 3. **Determinism in Sim.** Full rules in the `determinism-rules` skill — load it before writing Sim code. `scripts/check-determinism.sh` enforces the greppable parts.
 4. **Every state change is a serializable `Command`.** `Apply(state, command)` is the only mutation path. Replays must reproduce the same state hash.
-5. **Sim takes no third-party packages** (ADR 0007). `IronPipeline.Sim` is to reference nothing outside the BCL (target state; the hand-rolled YAML parser from spec 0002 is the only known gap, tracked in a follow-up issue). Content parsing (YAML etc.) belongs in a separate `IronPipeline.Content` project where YamlDotNet is allowed; Sim receives parsed data. (Existing parser code moves in a follow-up spec, not before.)
+5. **Sim takes no third-party packages** (ADR 0007). `IronPipeline.Sim` references nothing outside the BCL (`dependencies.allowed`, checked by `scripts/check-dependencies.sh`; the hand-rolled YAML parser from spec 0002 is the only known gap, tracked in a follow-up issue). A new package, project, file format, or hand-written parser/serializer for a standard format is always a `human` decision in a Spec. Content parsing (YAML etc.) belongs in a separate `IronPipeline.Content` project where YamlDotNet is allowed; Sim receives parsed data. (Existing parser code moves in a follow-up spec, not before.)
 6. **Content is data.** Units, terrain, factions, scenarios live in `content/**/*.yaml` with a schema in `content/schemas/`. Balance numbers never hard-coded in C#.
 7. **Hexes are pointy-top in presentation; Sim is orientation-agnostic** (axial/cube coordinates, `HexCoord`). Layout math and Game-layer conventions: `godot-presentation` skill.
 8. **Domain language** (hex, unit, stack, ZOC, supply line, depot, truck, MP, fuel, ammo) and the Command/GameState model: `wargame-domain` skill. Spec layout and scenario→test mapping: `spec-format` skill.
@@ -22,7 +22,10 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 - Sizes are **small** and **planned**. The word "feature" is never a size.
 - We do **not** use `/dev-team:specs` (its output would collide with `docs/specs/`); write the Spec from `docs/specs/TEMPLATE.md`. `/dev-team:plan` always takes `--output plans/NNNN-<name>.md`, copies the approved Features scenarios (same S-IDs and steps, plus `# Still passes if:` comments; no new ones; Features wins on any difference), and the plan file is pre-seeded with `**Gherkin persistence**: plan-file-only`.
 
-## How to work (ADR 0003, ADR 0005)
+## How to work (ADR 0003, ADR 0005, ADR 0008)
+- **Anything that went wrong is handled with the `root-cause-fix` skill: symptom → cause → cause fix → check. A symptom-only fix is an open item, not a fix.**
+- **Every rule in this file is backed by a named check in `scripts/` or tagged `judgment:<agent>` naming the reviewer that owns it. A rule with neither is a bug — file it.** The Rule → check table at the bottom lists them.
+- **Spec id** = exactly four digits from `scripts/next-spec-id.sh`; no suffixes (`spec-format` skill). Branch id `0000` is reserved for process-only work.
 - **Spec + Features first, then code-first.** Every change — including a bug fix — has an approved Spec and Features file before any code. On "approved", re-read the Spec and Features files from disk before acting on them; the human may have edited them. Then implement **code-first in small batches**: one behavior → its test → green → **refactor** → commit. Repeat.
 - **Refactor every batch.** Run the structure/complexity lens on what you just wrote. Every batch leaves refactor evidence: a `refactor:` commit, or a `no refactor: <reason>` line in the commit body. **Tests are frozen during refactor**: if a refactor needs a test change, stop, revert the refactor, and treat it as a behavior change in the next batch.
 - **One coding agent.** Do not spawn a separate tester agent.
@@ -49,7 +52,7 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 - No coverage targets. Do not add tests to raise coverage. Mutation testing runs weekly as a health metric only.
 
 ## One command
-`scripts/verify.sh` — format check, build (warnings as errors), tests, engine-boundary, determinism, asset-manifest, stale-reference and budget checks. CI runs the same script. Run it before every PR.
+`scripts/verify.sh` — engine-boundary, dependencies, spec-id, determinism, asset-manifest, stale-reference and budget checks, then format check, build (warnings as errors) and tests. CI runs the same script. Run it before every PR.
 
 Process-only PRs (no `src/` changes): `/dev-team:code-review` **must** include `review-process-drift`; a process PR without that agent's result is not reviewed. dev-team's pre-PR hook requires the gate file that `/code-review` writes; its bypass (`PR_GATE_BYPASS_REASON="<why>"` in the environment when running `/pr`) is allowed only when the review short-circuited as docs-only, and the reason must say so.
 
@@ -74,3 +77,41 @@ content/  assets/  assets-src/  scripts/  .github/workflows/
 ## Skills vs agents
 Knowledge lives once, in `.claude/skills/`, and is preloaded by the coding session and by the reviewer agents, so coder and reviewer are held to the same text. Reviewers stay separate agents for isolation (a cold read of the diff), parallel fan-out, and enforced read-only tools. Keep agent files to judgment and output format; put facts in skills.
 The root `IronPipeline.sln` is the headless solution (Sim, Tests, Tools) — build and test it without Godot.
+
+## Rule → check table
+Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = no deterministic check is possible; that reviewer owns it. `review-process-drift` fails the PR if a rule is missing here or has neither.
+
+| Rule | Check |
+|---|---|
+| 1. Sim never references Godot | `scripts/check-engine-boundary.sh` |
+| 1/5. Sim references no packages or projects; no hand-rolled standard-format parsers in Sim | `scripts/check-dependencies.sh` + `judgment:review-engine-boundary` |
+| 2. Game project contains no rules | `judgment:review-engine-boundary` |
+| 3. Determinism in Sim | `scripts/check-determinism.sh` + `judgment:review-determinism` |
+| 4. Every state change is a Command; replays reproduce the hash | `judgment:review-save-and-replay-compat` (golden replays via `verify.sh` once they exist) |
+| 5. Third-party code only in `IronPipeline.Content`; new dependency is a `human` decision | `scripts/check-dependencies.sh` + `judgment:review-engine-boundary` |
+| 6. Content is data; no balance numbers in C# | `judgment:review-content-schema` |
+| 7. Pointy-top in presentation, Sim orientation-agnostic | `judgment:review-engine-boundary` |
+| 8. Domain language and Command/GameState model | `judgment:review-engine-boundary` |
+| Vocabulary: Spec / Features / Plan, sizes small and planned | `scripts/check-stale-refs.sh` + `judgment:review-process-drift` |
+| Spec id format, uniqueness, Spec↔Features pairing | `scripts/check-spec-ids.sh` (via `scripts/lib/spec-id.sh`) |
+| Spec + Features approved before code; re-read on "approved" | `judgment:spec-consistency` |
+| Code-first small batches; refactor evidence per batch; tests frozen in refactor | `judgment:review-engine-boundary` (and every `review-*`) |
+| Size honest (small has at most six scenarios) | `judgment:spec-consistency` |
+| Budget per branch | `scripts/check-budget.sh` |
+| Reviewers may not raise the bar above the Spec | `judgment:review-process-drift` |
+| Never rewrite history | `judgment:review-process-drift` (no hook blocks it; a candidate check) |
+| Stage named paths only | `.claude/hooks/block-blanket-git-add.sh` PreToolUse hook (tested by `scripts/test-blanket-git-hook.sh`) |
+| Deferred work becomes a GitHub issue | `judgment:review-process-drift` |
+| Handoff file kept current, deleted on merge | `judgment:review-process-drift` |
+| Retiring anything adds the term to `scripts/retired-terms.txt` | `scripts/check-stale-refs.sh` + `judgment:review-process-drift` |
+| Red `main`: only fixes | `judgment:review-process-drift` |
+| Never promote (no tags or publishing by agents) | `judgment:review-process-drift` |
+| Anything that went wrong uses `root-cause-fix` | `judgment:review-process-drift` (fix/bug/incident PR body needs Cause / Cause fix / Check) |
+| Every rule has a check or a `judgment:` tag | `judgment:review-process-drift` |
+| Tests: one per scenario, `S<NN>_` naming, seeded state, no sleeps | `judgment:spec-consistency` (mapping) + `judgment:review-determinism` |
+| Tests: no coverage targets | `judgment:review-process-drift` |
+| `scripts/verify.sh` before every PR | CI runs `scripts/verify.sh` (`.github/workflows/ci.yml`) |
+| Process-only PRs include `review-process-drift` | pre-PR gate hook + `judgment:review-process-drift` |
+| C# conventions (file-scoped namespaces, sealed, records) | `dotnet format` in `scripts/verify.sh` |
+| Numbers in Spec with tolerance, then `content/` | `judgment:spec-consistency` |
+| Assets need a manifest entry | `scripts/check-asset-manifest.sh` |
