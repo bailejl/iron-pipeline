@@ -51,7 +51,25 @@ public sealed class HexMap
     /// <summary>The axial hex at offset column <paramref name="column"/>, row <paramref name="row"/> (no bounds check).</summary>
     public static HexCoord HexAt(int column, int row) => new(column - ((row - (row & 1)) / 2), row);
 
+    /// <summary>The terrain at <paramref name="hex"/>. Throws <see cref="ArgumentOutOfRangeException"/> outside the map.</summary>
+    public TerrainType TerrainAt(HexCoord hex) => TerrainTypes[_cells[RequireIndex(hex)]];
+
+    /// <summary>A copy of this map with <paramref name="hex"/> set to <paramref name="terrain"/>.</summary>
+    public HexMap WithTerrain(HexCoord hex, TerrainType terrain)
+    {
+        ArgumentNullException.ThrowIfNull(terrain);
+        int index = RequireIndex(hex);
+        byte[] cells = (byte[])_cells.Clone();
+        cells[index] = (byte)IndexOfType(TerrainTypes, terrain);
+        return new HexMap(Width, Height, TerrainTypes, cells);
+    }
+
     public bool InBounds(HexCoord hex) => TryGetIndex(hex, out _);
+
+    private int RequireIndex(HexCoord hex) =>
+        TryGetIndex(hex, out int index)
+            ? index
+            : throw new ArgumentOutOfRangeException(nameof(hex), hex, $"Hex is outside the {Width}x{Height} map.");
 
     private bool TryGetIndex(HexCoord hex, out int index)
     {

@@ -60,6 +60,34 @@ public class MapAndTerrainAcceptanceTests
         Assert.False(map.InBounds(new HexCoord(100, 100)));
     }
 
+    [Fact]
+    public void S05_TerrainQueryReturnsTheTerrainStoredAtAHex()
+    {
+        IReadOnlyList<TerrainType> types = TestContent.LoadTerrain();
+        TerrainType plains = types.Single(t => t.Id == "plains");
+        TerrainType forest = types.Single(t => t.Id == "forest");
+        TerrainType hills = types.Single(t => t.Id == "hills");
+        HexMap map = HexMap.Filled(5, 3, types, plains)
+            .WithTerrain(new HexCoord(0, 0), forest)
+            .WithTerrain(new HexCoord(3, 2), hills);
+
+        TerrainType atFirst = map.TerrainAt(new HexCoord(0, 0));
+        TerrainType atLast = map.TerrainAt(new HexCoord(3, 2));
+        TerrainType atCenter = map.TerrainAt(new HexCoord(2, 1));
+
+        Assert.Equal(("forest", 2, 25), (atFirst.Id, atFirst.MovementCost, atFirst.DefenseModifierPct));
+        Assert.Equal(("hills", 3, 40), (atLast.Id, atLast.MovementCost, atLast.DefenseModifierPct));
+        Assert.Equal(("plains", 1, 0), (atCenter.Id, atCenter.MovementCost, atCenter.DefenseModifierPct));
+    }
+
+    [Fact]
+    public void S06_TerrainQueryOutsideTheMapIsAnError()
+    {
+        HexMap map = PlainsMap(5, 3);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => map.TerrainAt(new HexCoord(100, 100)));
+    }
+
     private static HexMap PlainsMap(int width, int height)
     {
         IReadOnlyList<TerrainType> types = TestContent.LoadTerrain();
