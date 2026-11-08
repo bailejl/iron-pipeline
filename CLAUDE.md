@@ -117,7 +117,7 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | C# conventions (file-scoped namespaces, sealed, records) | `dotnet format` in `scripts/verify.sh` |
 | Numbers in Spec with tolerance, then `content/` | `judgment:spec-consistency` |
 | Assets need a manifest entry | `scripts/check-asset-manifest.sh` |
-| `/dev-team:specs` not used; `/dev-team:plan --output plans/NNNN-<name>.md` copies Features scenarios unchanged, `plan-file-only` | `scripts/check-stale-refs.sh` + `judgment:review-process-drift` |
+| `/dev-team:specs` not used; `/dev-team:plan --output plans/NNNN-<name>.md` copies Features scenarios unchanged, `plan-file-only` | `judgment:review-process-drift` |
 | Size the task: small and planned flows (reviewers, order of steps) | `judgment:review-process-drift` |
 | One coding agent; no separate tester agent | `judgment:review-process-drift` |
 | Code review once all scenarios are green, before cleanup; review fixes in their own commit | `judgment:review-process-drift` |
