@@ -1,6 +1,6 @@
 # Features 0002 — Map and terrain
 # Spec: docs/specs/0002-map-and-terrain.md
-# Status: approved
+# Status: implemented
 #
 # Human-owned behavior contract. Every scenario below becomes exactly one xUnit test
 # named S<NN>_<ScenarioInPascalCase> in IronPipeline.Sim.Tests. Numbers, decisions,

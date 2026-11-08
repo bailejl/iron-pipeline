@@ -42,23 +42,24 @@ public sealed class HexMap
         ArgumentOutOfRangeException.ThrowIfGreaterThan(height, MaxSide);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(terrainTypes.Count, MaxTerrainTypes);
 
-        int fillIndex = IndexOfType(terrainTypes, fill);
+        IReadOnlyList<TerrainType> table = Array.AsReadOnly(terrainTypes.ToArray());
+        int fillIndex = IndexOfType(table, fill);
         byte[] cells = new byte[width * height];
         Array.Fill(cells, (byte)fillIndex);
-        return new HexMap(width, height, terrainTypes, cells);
+        return new HexMap(width, height, table, cells);
     }
 
     /// <summary>The axial hex at offset column <paramref name="column"/>, row <paramref name="row"/> (no bounds check).</summary>
     public static HexCoord HexAt(int column, int row) => new(column - ((row - (row & 1)) / 2), row);
 
     /// <summary>The terrain at <paramref name="hex"/>. Throws <see cref="ArgumentOutOfRangeException"/> outside the map.</summary>
-    public TerrainType TerrainAt(HexCoord hex) => TerrainTypes[_cells[RequireIndex(hex)]];
+    public TerrainType TerrainAt(HexCoord hex) => TerrainTypes[_cells[IndexOf(hex)]];
 
     /// <summary>A copy of this map with <paramref name="hex"/> set to <paramref name="terrain"/>.</summary>
     public HexMap WithTerrain(HexCoord hex, TerrainType terrain)
     {
         ArgumentNullException.ThrowIfNull(terrain);
-        int index = RequireIndex(hex);
+        int index = IndexOf(hex);
         byte[] cells = (byte[])_cells.Clone();
         cells[index] = (byte)IndexOfType(TerrainTypes, terrain);
         return new HexMap(Width, Height, TerrainTypes, cells);
@@ -66,7 +67,8 @@ public sealed class HexMap
 
     public bool InBounds(HexCoord hex) => TryGetIndex(hex, out _);
 
-    private int RequireIndex(HexCoord hex) =>
+    /// <summary>Flat-array index of <paramref name="hex"/> (row-major). Throws <see cref="ArgumentOutOfRangeException"/> outside the map.</summary>
+    public int IndexOf(HexCoord hex) =>
         TryGetIndex(hex, out int index)
             ? index
             : throw new ArgumentOutOfRangeException(nameof(hex), hex, $"Hex is outside the {Width}x{Height} map.");

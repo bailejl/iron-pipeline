@@ -41,18 +41,25 @@ public static class TerrainLoader
         Dictionary<string, string> fields = ReadFields(yaml, source);
 
         string id = Require(fields, "id", source);
+        if (!IsValidId(id))
+        {
+            throw new InvalidDataException($"{source}: field 'id' must match [a-z][a-z0-9_]*, got '{id}'.");
+        }
+
         bool passable = !fields.TryGetValue("passable", out string? passableText)
             || ParseBool(passableText, source);
         int defense = ParseInt(Require(fields, "defense_modifier", source), "defense_modifier", MinDefense, MaxDefense, source);
+        int? cost = fields.TryGetValue("movement_cost", out string? costText)
+            ? ParseInt(costText, "movement_cost", MinCost, MaxCost, source)
+            : null;
 
-        if (!passable)
-        {
-            return TerrainType.Impassable(id, defense);
-        }
-
-        int cost = ParseInt(Require(fields, "movement_cost", source), "movement_cost", MinCost, MaxCost, source);
-        return TerrainType.Passable(id, cost, defense);
+        return passable
+            ? TerrainType.Passable(id, cost ?? throw new InvalidDataException($"{source}: missing required field 'movement_cost'."), defense)
+            : TerrainType.Impassable(id, defense);
     }
+
+    private static bool IsValidId(string id) =>
+        id[0] is >= 'a' and <= 'z' && id.All(c => c is (>= 'a' and <= 'z') or (>= '0' and <= '9') or '_');
 
     private static Dictionary<string, string> ReadFields(string yaml, string source)
     {

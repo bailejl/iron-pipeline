@@ -1,6 +1,6 @@
 # Spec 0002 — Map and terrain
 
-**Status:** approved
+**Status:** implemented
 **Size:** small
 **Budget:** 6 commits, 1 review round
 **Pillar(s):** big maps, readable tactics
