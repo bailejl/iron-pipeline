@@ -97,7 +97,7 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | Vocabulary: Spec / Features / Plan, sizes small and planned | `scripts/check-stale-refs.sh` + `judgment:review-process-drift` |
 | Spec id format, uniqueness, Spec↔Features pairing | `scripts/check-spec-ids.sh` (via `scripts/lib/spec-id.sh`) |
 | Spec + Features approved before code (committed before the first `src/` commit); re-read on "approved" | `judgment:review-engine-boundary` |
-| Code-first small batches; refactor evidence per batch; tests frozen in refactor | `judgment:review-engine-boundary` (and every `review-*`) |
+| Code-first small batches; refactor evidence per batch; tests frozen in refactor | `judgment:review-engine-boundary` (and each code reviewer: `review-determinism`, `review-save-and-replay-compat`, `review-content-schema`, `review-sim-performance`, `review-asset-pipeline`) |
 | Size honest (small has at most six scenarios) | `judgment:spec-consistency` |
 | Budget per branch | `scripts/check-budget.sh` |
 | Reviewers may not raise the bar above the Spec | `judgment:review-process-drift` |
@@ -115,7 +115,7 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | `scripts/verify.sh` before every PR | CI runs `scripts/verify.sh` (`.github/workflows/ci.yml`) |
 | Process-only PRs include `review-process-drift` | pre-PR gate hook + `judgment:review-process-drift` |
 | C# conventions (file-scoped namespaces, sealed, records) | `dotnet format` in `scripts/verify.sh` |
-| Numbers in Spec with tolerance, then `content/` | `judgment:spec-consistency` |
+| Numbers in Spec with tolerance, then `content/` | `judgment:spec-consistency` (tolerances) + `judgment:review-content-schema` (Numbers vs `content/`) |
 | Assets need a manifest entry | `scripts/check-asset-manifest.sh` |
 | `/dev-team:specs` not used; `/dev-team:plan --output plans/NNNN-<name>.md` copies Features scenarios unchanged, `plan-file-only` | `judgment:review-process-drift` |
 | Size the task: small and planned flows (reviewers, order of steps) | `judgment:review-process-drift` |
