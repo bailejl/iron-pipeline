@@ -18,6 +18,9 @@ The sim must produce the identical state hash from the same seed and command log
 | `GetHashCode()` for ordering or ids | not stable across runtimes | explicit integer ids |
 | `Parallel.*`, `Task.Run`, `async` inside `Rules.Apply` | nondeterministic interleaving | sequential rule code; parallelism only in Tools (self-play) around whole games |
 
+## Dependencies
+`IronPipeline.Sim` takes no third-party packages — BCL only. Content parsing (YAML) belongs in a separate `IronPipeline.Content` project where YamlDotNet is allowed; Sim receives parsed data. Third-party code in rule code is unaudited for determinism.
+
 ## Approved patterns
 - **Randomness:** `IRandom` lives on `GameState`; every call advances it; `Rules.Apply` receives state and returns state, never reaching for a global.
 - **Ordering:** units, hexes and commands are processed in **id order** unless the spec says otherwise. Ids are dense integers assigned at creation.

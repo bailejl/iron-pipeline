@@ -17,12 +17,14 @@ Templates: `docs/specs/TEMPLATE.md`, `features/TEMPLATE.feature`. Worked example
 ## Rules
 - **Every change has a Spec and a Features file**, even a bug fix (a Spec can be ten lines; "no decisions" is a valid log).
 - **Numbers live in the Spec, with a tolerance or `exact`.** A value with no tolerance is not approvable. Values then go to `content/`, never into C#.
-- **Ambiguity Log:** before writing ACs, list every open question. Try to infer; if one plausible alternative exists that the repo does not rule out, it is `human`, and the human answers it before approval. "Inferable" is not a convenient default.
-- **Size** decides the machinery (CLAUDE.md): `small` → single agent + deterministic gates; `planned` → `/dev-team:plan`, spec reviewers, review fan-out, playtest.
-- **Budget** (commits, review rounds) is enforced by `scripts/check-budget.sh`. Exceeding it means stop, defer, escalate — never keep polishing.
+- **Ambiguity Log:** before writing ACs, list every open question. Try to infer; if one plausible alternative exists that the repo does not rule out, it is `human`, and the human answers it before approval. "Inferable" is not a convenient default. If you can offer a guess, the decision is inferable — write the guess as the rationale. `human` is reserved for decisions where two defensible answers lead to different games.
+- **Schema'd content:** when the change's content has a schema in `content/schemas/`, add an AC "the loader enforces every schema rule" with one scenario per rule.
+- **Geometry and layout:** a decision that defines geometry or layout (offset parity, neighbor order, coordinates) must have literal coordinate examples in a scenario — an independent oracle, not a restatement of the formula.
+- **Size** decides the machinery (CLAUDE.md): `small` → single agent + deterministic gates + `spec-consistency` reviewer (ADR 0006); `planned` → `/dev-team:plan`, `spec-consistency` + the other spec reviewers, review fan-out, playtest. A Spec with more than six scenarios is not small.
+- **Budget** (commits, review rounds) is enforced by `scripts/check-budget.sh`. Default for small = number of scenarios + 3 commits; review fixes count and go in their own commit; amend only unpushed commits. Exceeding it means stop, defer, escalate — never keep polishing.
 - **Scenario IDs** `S01…` are stable; add at the end, never renumber. Each scenario ⇒ exactly one xUnit test `S<NN>_<ScenarioInPascalCase>` in `<Name>AcceptanceTests`. Invariants are FsCheck property tests listed in the Features trailing comment, not scenarios.
 - **Reviewers may not raise the bar above the Spec.** A stricter bar is a `spec-change` finding for the human, never a fix request.
 - The Gherkin keyword `Feature:` is syntax; do not use "feature" for a task size (sizes are `small` and `planned`).
 
 ## Review checklist (what `spec-*` agents look for)
-Pillar named · Size honest · Budget set · every Number has a tolerance and a range · every `human` decision actually answered · every AC has a scenario and vice versa · nothing in Scope-Out referenced · every scenario expressible as a Command · no time or floats · presentation stated for anything player-facing · consistency gate PASS.
+Pillar named · Size honest (≤ six scenarios if small) · Budget set · every Number has a tolerance and a range · every `human` decision actually answered · every AC has a scenario and vice versa · nothing in Scope-Out referenced · every scenario expressible as a Command · no time or floats · presentation stated for anything player-facing · schema rules each have a scenario · geometry decisions have literal coordinates · consistency gate PASS. The mechanical subset is the `spec-consistency` agent's whole job.

@@ -23,4 +23,8 @@ Feature: <Feature name>
   Scenario: S02 <edge case>
     ...
 
-  # Invariants (property tests, not scenarios): ...
+  # Schema'd content: one scenario per schema rule ("the loader enforces every schema rule").
+  # Geometry/layout decisions (offset parity, neighbor order, ...): a scenario with literal coordinates, e.g.
+  #   Then the neighbors of (2,1) are exactly [(3,1), (2,0), (1,0), (1,1), (1,2), (2,2)]
+
+  # Invariants (property tests, not scenarios): ... each must be implementable from the API the Spec states.
