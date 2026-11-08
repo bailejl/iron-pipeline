@@ -10,9 +10,10 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 2. **The Godot project (`src/IronPipeline.Game`) contains no rules.** It renders Sim state and submits `Command`s.
 3. **Determinism in Sim.** Full rules in the `determinism-rules` skill — load it before writing Sim code. `scripts/check-determinism.sh` enforces the greppable parts.
 4. **Every state change is a serializable `Command`.** `Apply(state, command)` is the only mutation path. Replays must reproduce the same state hash.
-5. **Content is data.** Units, terrain, factions, scenarios live in `content/**/*.yaml` with a schema in `content/schemas/`. Balance numbers never hard-coded in C#.
-6. **Hexes are pointy-top in presentation; Sim is orientation-agnostic** (axial/cube coordinates, `HexCoord`). Layout math and Game-layer conventions: `godot-presentation` skill.
-7. **Domain language** (hex, unit, stack, ZOC, supply line, depot, truck, MP, fuel, ammo) and the Command/GameState model: `wargame-domain` skill. Spec layout and scenario→test mapping: `spec-format` skill.
+5. **Sim takes no third-party packages** (ADR 0007). `IronPipeline.Sim` is to reference nothing outside the BCL (target state; the hand-rolled YAML parser from spec 0002 is the only known gap, tracked in a follow-up issue). Content parsing (YAML etc.) belongs in a separate `IronPipeline.Content` project where YamlDotNet is allowed; Sim receives parsed data. (Existing parser code moves in a follow-up spec, not before.)
+6. **Content is data.** Units, terrain, factions, scenarios live in `content/**/*.yaml` with a schema in `content/schemas/`. Balance numbers never hard-coded in C#.
+7. **Hexes are pointy-top in presentation; Sim is orientation-agnostic** (axial/cube coordinates, `HexCoord`). Layout math and Game-layer conventions: `godot-presentation` skill.
+8. **Domain language** (hex, unit, stack, ZOC, supply line, depot, truck, MP, fuel, ammo) and the Command/GameState model: `wargame-domain` skill. Spec layout and scenario→test mapping: `spec-format` skill.
 
 ## Vocabulary (exact; see `spec-format` skill)
 - **Spec** = `docs/specs/NNNN-<name>.md` — intent, Numbers (with tolerances), Decisions & Ambiguity Log, ACs, Size, Budget.
@@ -22,13 +23,18 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 - We do **not** use `/dev-team:specs` (its output would collide with `docs/specs/`); write the Spec from `docs/specs/TEMPLATE.md`. `/dev-team:plan` always takes `--output plans/NNNN-<name>.md`, copies the approved Features scenarios (same S-IDs and steps, plus `# Still passes if:` comments; no new ones; Features wins on any difference), and the plan file is pre-seeded with `**Gherkin persistence**: plan-file-only`.
 
 ## How to work (ADR 0003, ADR 0005)
-- **Spec + Features first, then code-first.** Every change — including a bug fix — has an approved Spec and Features file before any code. Then implement **code-first in small batches**: one behavior → its test → green → **refactor** → commit. Repeat.
-- **Refactor every batch.** Run the structure/complexity lens on what you just wrote. **Tests are frozen during refactor**: if a refactor needs a test change, stop, revert the refactor, and treat it as a behavior change in the next batch.
+- **Spec + Features first, then code-first.** Every change — including a bug fix — has an approved Spec and Features file before any code. On "approved", re-read the Spec and Features files from disk before acting on them; the human may have edited them. Then implement **code-first in small batches**: one behavior → its test → green → **refactor** → commit. Repeat.
+- **Refactor every batch.** Run the structure/complexity lens on what you just wrote. Every batch leaves refactor evidence: a `refactor:` commit, or a `no refactor: <reason>` line in the commit body. **Tests are frozen during refactor**: if a refactor needs a test change, stop, revert the refactor, and treat it as a behavior change in the next batch.
 - **One coding agent.** Do not spawn a separate tester agent.
-- **Size the task (set in the Spec header):**
-  - **small** (bug fix, one-file change, content/balance tweak, single-slice rule): Spec + Features → human approval → implement directly → `scripts/verify.sh` → PR. No spec reviewers, no review fan-out.
-  - **planned** (multi-slice, new system, UI): Spec + Features → spec reviewers (`.claude/agents/spec-*`) → human approval → `/dev-team:plan --output plans/NNNN-<name>.md` → human approves plan → `/dev-team:build` per slice (one branch `NNNN-<name>-sN`, one PR per slice) → `scripts/verify.sh` → code reviewers (`.claude/agents/review-*`) → `/playtest-checklist NNNN` → PR per slice.
-- **Budget.** The Spec header sets `Budget: N commits, M review rounds` (defaults: small 6/1, planned slice 15/2). Budgets are **per branch**; planned work uses one branch and one PR per slice, so slice budget = branch budget. `scripts/check-budget.sh` fails `verify.sh` when exceeded. At that point the only allowed move is: stop, write remaining work into the PR's "Deferred" section, open issues, escalate to the human. Never keep polishing past budget.
+- **Size the task (set in the Spec header; a Spec with more than six scenarios is not small):**
+  - **small** (bug fix, one-file change, content/balance tweak, single-slice rule): Spec + Features → author's consistency-gate checklist → `spec-consistency` reviewer (ADR 0006) → human approval → implement directly → `scripts/verify.sh` → `/dev-team:code-review` → PR. No other spec reviewers, no review fan-out.
+  - **planned** (multi-slice, new system, UI): Spec + Features → `spec-consistency` + the other spec reviewers (`.claude/agents/spec-*`) → human approval → `/dev-team:plan --output plans/NNNN-<name>.md` → human approves plan → `/dev-team:build` per slice (one branch `NNNN-<name>-sN`, one PR per slice) → `scripts/verify.sh` → code reviewers (`.claude/agents/review-*`) → `/playtest-checklist NNNN` → PR per slice.
+- **Code review timing.** Run `/dev-team:code-review` once all scenarios are green, before cleanup commits — not after the budget is spent. Review fixes go in their own commit; amend only unpushed commits.
+- **Status.** The agent sets `Status: implemented` in both the Spec and the Features file in the PR's final commit.
+- **Never rewrite history** (filter-branch, rebase, force-push, amending pushed commits) unless the human asks for it in the session.
+- **Stage named paths only** (`git add <path>`); a PreToolUse hook denies `git add -A/--all/.` and `git commit -a`.
+- **Repowise block.** Its block in `.claude/CLAUDE.md` stays in the repo and is kept current, like a lockfile: leave it unstaged during the work; `/pr` commits it alone as `chore(repowise): refresh index`, which `check-budget.sh` does not count, and `check-stale-refs.sh` / `review-process-drift` skip only that generated block, not the rest of `.claude/CLAUDE.md`.
+- **Budget.** The Spec header sets `Budget: N commits, M review rounds`. Default for small = number of scenarios + 3 commits, 1 review round (review fixes included); planned slice default stays 15/2. Budgets are **per branch**; planned work uses one branch and one PR per slice, so slice budget = branch budget. `scripts/check-budget.sh` fails `verify.sh` when exceeded. At that point the only allowed move is: stop, write remaining work into the PR's "Deferred" section, open issues, escalate to the human. Never keep polishing past budget.
 - **Reviewers may not raise the bar above the Spec.** A stricter bar is a `spec-change` finding for the human, never a fix request. Numbers in the Spec carry tolerances for exactly this reason.
 - **Deferred work becomes a GitHub issue** (`gh issue create`), never "later slice N" in prose. Agents may open issues. One standing issue, "needs a person", collects playtests and visual checks.
 - **Handoff.** For any in-progress planned work, keep `docs/handoff/HANDOFF-NNNN-<name>.md` (template there) current: decisions in force, next steps. Delete it on merge.
@@ -61,7 +67,7 @@ src/IronPipeline.Tools      replay/validate/selfplay CLI
 src/IronPipeline.Game       Godot 4.7 project (opens with Godot .NET; Godot generates its own .sln here)
 docs/gdd.md  docs/adr/  docs/specs/ (Spec .md)  features/ (Gherkin)  plans/  docs/playtest/  docs/handoff/
 content/  assets/  assets-src/  scripts/  .github/workflows/
-.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, test-conventions, godot-presentation, asset-pipeline, playtest-checklist
+.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, test-conventions, godot-presentation, asset-pipeline, playtest-checklist, pr
 .claude/agents/   isolated read-only reviewers that preload those skills
 ```
 

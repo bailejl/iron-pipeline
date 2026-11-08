@@ -30,5 +30,8 @@ A replay is `seed + command log → final state hash`. Changing a hash on purpos
 - One scene-test file per Features number so parallel work never edits the same file.
 - Feel is not tested here; that's the playtest checklist.
 
+## Refactor evidence
+Every batch (behavior → test → green) leaves evidence of the refactor step: a `refactor:` commit, or a `no refactor: <reason>` line in the batch's commit body. Tests are frozen during the refactor. Reviewers check "refactor evidence present per batch".
+
 ## Smells that fail review
-Sleeps · commanding through setup · asserting on engine internals · an acceptance test with only relative or null-check assertions · tests edited during a refactor step · a `[Fact]` that duplicates a property · scenario IDs that don't match the Features file.
+Sleeps · commanding through setup · asserting on engine internals · an acceptance test with only relative or null-check assertions · tests edited during a refactor step · a `[Fact]` that duplicates a property · scenario IDs that don't match the Features file · a batch with no refactor evidence.
