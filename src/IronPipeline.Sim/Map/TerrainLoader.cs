@@ -16,14 +16,14 @@ public static class TerrainLoader
 
     public static IReadOnlyList<TerrainType> LoadDirectory(string directory)
     {
-        string[] files = Directory.GetFiles(directory, "*.yaml");
+        string[] files = Directory.GetFiles(directory, "*.yaml"); // dependency: ok removed by spec 0003
         Array.Sort(files, StringComparer.Ordinal);
 
         List<TerrainType> types = [];
         Dictionary<string, string> sourceById = [];
         foreach (string file in files)
         {
-            TerrainType type = Parse(File.ReadAllText(file), file);
+            TerrainType type = Parse(File.ReadAllText(file), file); // dependency: ok removed by spec 0003
             if (sourceById.TryGetValue(type.Id, out string? first))
             {
                 throw new InvalidDataException($"Duplicate terrain id '{type.Id}' in {first} and {file}.");

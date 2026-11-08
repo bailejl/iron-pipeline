@@ -5,6 +5,10 @@ docs/specs/NNNN-<name>.md · size: small | planned · budget used: N/M commits, 
 By AC / plan step:
 -
 
+## Done-when criteria from the brief/Spec
+One checkbox per item of the brief's "Done when" list or the Spec's ACs (process PRs: the brief). The `pr` skill refuses to open the PR with an unchecked item unless the title starts with `[incomplete]` and the body says why and asks the human.
+- [ ] 
+
 ## Verification
 - [ ] `scripts/verify.sh` green (paste the last line)
 - [ ] Acceptance tests: S__–S__ pass (`dotnet test` count: )

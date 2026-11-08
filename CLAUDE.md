@@ -44,6 +44,8 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 - **Retiring anything** (a tool, a path, a convention, a name) is not done until the term is in `scripts/retired-terms.txt` and `scripts/check-stale-refs.sh` passes. The `review-process-drift` agent runs on any PR touching CLAUDE.md, ADRs, skills, agents or templates.
 - **Small commits** on a spec branch (`NNNN-<name>`) or worktree; trunk (`main`) is always green and shippable.
 - **Red pipeline = only fixes.** If `main` is red, no new features until it's green (Agentic CD constraint 8).
+- **Retro.** After a small spec or planned slice merges, open a retro issue from `.github/ISSUE_TEMPLATE/retro.md`; every defect it finds becomes its own Defect issue (`.github/ISSUE_TEMPLATE/defect.md`, `root-cause-fix` skill).
+- **Done-when.** A PR body carries a "Done-when criteria from the brief/Spec" checklist (`.github/PULL_REQUEST_TEMPLATE.md`); `/pr` refuses to open with an unchecked item unless the title starts with `[incomplete]` and the body says why and asks the human.
 - **Never promote.** Agents never tag releases or publish builds; they open PRs (Agentic CD constraint 7).
 
 ## Tests (full rules: `test-conventions` skill — load it before writing tests)
@@ -70,7 +72,7 @@ src/IronPipeline.Tools      replay/validate/selfplay CLI
 src/IronPipeline.Game       Godot 4.7 project (opens with Godot .NET; Godot generates its own .sln here)
 docs/gdd.md  docs/adr/  docs/specs/ (Spec .md)  features/ (Gherkin)  plans/  docs/playtest/  docs/handoff/
 content/  assets/  assets-src/  scripts/  .github/workflows/
-.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, test-conventions, godot-presentation, asset-pipeline, playtest-checklist, pr
+.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, test-conventions, godot-presentation, asset-pipeline, playtest-checklist, pr, root-cause-fix
 .claude/agents/   isolated read-only reviewers that preload those skills
 ```
 
@@ -84,7 +86,7 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | Rule | Check |
 |---|---|
 | 1. Sim never references Godot | `scripts/check-engine-boundary.sh` |
-| 1/5. Sim references no packages or projects; no hand-rolled standard-format parsers in Sim | `scripts/check-dependencies.sh` + `judgment:review-engine-boundary` |
+| 1/5. Sim references no packages or projects; Sim does no I/O and no text-format parsing (content check on listed I/O and YAML/JSON/Regex patterns; other formats by judgment; `// dependency: ok <reason>` marker on the offending line) | `scripts/check-dependencies.sh` + `judgment:review-engine-boundary` |
 | 2. Game project contains no rules | `judgment:review-engine-boundary` |
 | 3. Determinism in Sim | `scripts/check-determinism.sh` + `judgment:review-determinism` |
 | 4. Every state change is a Command; replays reproduce the hash | `judgment:review-save-and-replay-compat` (golden replays via `verify.sh` once they exist) |
@@ -94,8 +96,8 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | 8. Domain language and Command/GameState model | `judgment:review-engine-boundary` |
 | Vocabulary: Spec / Features / Plan, sizes small and planned | `scripts/check-stale-refs.sh` + `judgment:review-process-drift` |
 | Spec id format, uniqueness, Spec↔Features pairing | `scripts/check-spec-ids.sh` (via `scripts/lib/spec-id.sh`) |
-| Spec + Features approved before code; re-read on "approved" | `judgment:spec-consistency` |
-| Code-first small batches; refactor evidence per batch; tests frozen in refactor | `judgment:review-engine-boundary` (and every `review-*`) |
+| Spec + Features approved before code (committed before the first `src/` commit); re-read on "approved" | `judgment:review-engine-boundary` |
+| Code-first small batches; refactor evidence per batch; tests frozen in refactor | `judgment:review-engine-boundary` (code-first, tests frozen, refactor evidence); refactor evidence also by each code reviewer: `review-determinism`, `review-save-and-replay-compat`, `review-content-schema`, `review-sim-performance`, `review-asset-pipeline` |
 | Size honest (small has at most six scenarios) | `judgment:spec-consistency` |
 | Budget per branch | `scripts/check-budget.sh` |
 | Reviewers may not raise the bar above the Spec | `judgment:review-process-drift` |
@@ -108,10 +110,28 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | Never promote (no tags or publishing by agents) | `judgment:review-process-drift` |
 | Anything that went wrong uses `root-cause-fix` | `judgment:review-process-drift` (fix/bug/incident PR body needs Cause / Cause fix / Check) |
 | Every rule has a check or a `judgment:` tag | `judgment:review-process-drift` |
-| Tests: one per scenario, `S<NN>_` naming, seeded state, no sleeps | `judgment:spec-consistency` (mapping) + `judgment:review-determinism` |
+| Tests: one per scenario, `S<NN>_` naming, seeded state, no sleeps, never assert on engine internals; property tests for invariants; golden replays | `judgment:review-determinism` (+ `judgment:review-save-and-replay-compat` for replays) |
 | Tests: no coverage targets | `judgment:review-process-drift` |
 | `scripts/verify.sh` before every PR | CI runs `scripts/verify.sh` (`.github/workflows/ci.yml`) |
 | Process-only PRs include `review-process-drift` | pre-PR gate hook + `judgment:review-process-drift` |
 | C# conventions (file-scoped namespaces, sealed, records) | `dotnet format` in `scripts/verify.sh` |
-| Numbers in Spec with tolerance, then `content/` | `judgment:spec-consistency` |
+| Numbers in Spec with tolerance, then `content/` | `judgment:spec-consistency` (tolerances) + `judgment:review-content-schema` (Numbers vs `content/`) |
 | Assets need a manifest entry | `scripts/check-asset-manifest.sh` |
+| `/dev-team:specs` not used; `/dev-team:plan --output plans/NNNN-<name>.md` copies Features scenarios unchanged, `plan-file-only` | `judgment:review-process-drift` |
+| Size the task: small and planned flows (reviewers, order of steps) | `judgment:review-process-drift` |
+| One coding agent; no separate tester agent | `judgment:review-process-drift` |
+| Code review once all scenarios are green, before cleanup; review fixes in their own commit | `judgment:review-process-drift` |
+| `Status: implemented` set in Spec and Features in the PR's final commit | `judgment:review-process-drift` |
+| Repowise block: unstaged during work, committed alone as `chore(repowise)` | `scripts/check-budget.sh` (does not count it) + `judgment:review-process-drift` |
+| Branch id `0000` reserved for process-only work (no Spec) | `scripts/check-spec-ids.sh` + `judgment:review-process-drift` |
+| Planned work: one branch (`NNNN-<name>-sN`) and one PR per slice | `judgment:review-process-drift` |
+| `/playtest-checklist NNNN` once reviews pass (planned, player-facing PRs) | `judgment:review-process-drift` |
+| Budget exceeded: stop, write Deferred, open issues, escalate | `scripts/check-budget.sh` + `judgment:review-process-drift` |
+| One standing "needs a person" issue collects playtests and visual checks | `judgment:review-process-drift` |
+| Small commits on a spec branch (`NNNN-<name>`); trunk always green | CI runs `scripts/verify.sh` + `judgment:review-process-drift` |
+| Mutation testing is a weekly health metric only, not a gate | `judgment:review-process-drift` |
+| Gate bypass (`PR_GATE_BYPASS_REASON`) only for docs-only reviews, reason says so | pre-PR gate hook + `judgment:review-process-drift` |
+| Namespaces mirror folders; public Sim API small and intention-revealing | `dotnet format` in `scripts/verify.sh` (namespaces) + `judgment:review-engine-boundary` (API) |
+| Knowledge lives once in `.claude/skills/`; agent files hold judgment and output format only | `judgment:review-process-drift` |
+| Retro issue from `.github/ISSUE_TEMPLATE/retro.md` after each merge; defects found → Defect template | `judgment:review-process-drift` |
+| PR body has the "Done-when criteria from the brief/Spec" checklist; `/pr` refuses unchecked items unless title starts `[incomplete]` | `judgment:review-process-drift` (process PRs carry the section) |
