@@ -13,6 +13,13 @@ By AC / plan step:
 - [ ] Exported build launched (platform: )
 - [ ] **Not verified:** <anything not run, and why>
 
+## If this fixes something that went wrong
+Required when the PR title or labels say fix / bug / incident (`root-cause-fix` skill). Leave blank otherwise.
+- **Symptom (evidence):**
+- **Cause** (proximate / enabling):
+- **Cause fix:**
+- **Check** (script or `judgment:<agent>`), **Verified** (failed on the symptom, then passed):
+
 ## Review
 Panel run: <agents> · fix rounds: · closing passes:
 

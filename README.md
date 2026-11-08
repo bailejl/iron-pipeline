@@ -19,7 +19,7 @@ plans/                       /dev-team:plan output for planned-size work
 content/                     units/terrain/factions/scenarios as YAML + schemas   (all rights reserved)
 assets/                      final PNG/OGG via Git LFS                            (all rights reserved)
 assets-src/                  prompts + provenance manifest (Steam AI disclosure record)
-scripts/verify.sh            the one command: boundary, determinism, manifest, stale-refs, budget, then format, build, test
+scripts/verify.sh            the one command: boundary, dependencies, spec-ids, determinism, manifest, stale-refs, budget, then format, build, test
 ```
 `IronPipeline.sln` at the root is the **headless** solution (Sim, Tests, Tools). It builds and tests
 without Godot. The Game project is opened with the Godot .NET editor, which generates its own solution.

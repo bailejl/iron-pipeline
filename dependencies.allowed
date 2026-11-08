@@ -1,0 +1,24 @@
+# Allowlist of PackageReference / ProjectReference per project. Checked by scripts/check-dependencies.sh.
+# Changing this file requires a `human` row in a Spec that names the package and why.
+# Format: [Project] then `package <Include>` or `project <Project>` lines. An empty block means no references.
+
+[IronPipeline.Sim]
+
+[IronPipeline.Sim.Tests]
+package Microsoft.NET.Test.Sdk
+package xunit
+package xunit.runner.visualstudio
+package FsCheck.Xunit
+project IronPipeline.Sim
+
+[IronPipeline.Tools]
+project IronPipeline.Sim
+
+# Godot SDK is the project SDK, not a package.
+[IronPipeline.Game]
+project IronPipeline.Sim
+
+# Reserved: created by spec 0003.
+[IronPipeline.Content]
+package YamlDotNet
+project IronPipeline.Sim

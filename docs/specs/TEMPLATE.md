@@ -6,6 +6,7 @@
 **Pillar(s):** logistics tension | big maps | readable tactics | distinct factions
 **Features:** features/NNNN-<name>.feature
 **Plan:** plans/NNNN-<name>.md (planned only)
+**Follows:** NNNN (only for a follow-up to an earlier Spec; delete the line otherwise)
 
 ## Intent
 One to three paragraphs: who, what is wrong today, what this changes, which pillar it serves.
