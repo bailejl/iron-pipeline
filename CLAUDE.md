@@ -97,7 +97,7 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | Vocabulary: Spec / Features / Plan, sizes small and planned | `scripts/check-stale-refs.sh` + `judgment:review-process-drift` |
 | Spec id format, uniqueness, Spec↔Features pairing | `scripts/check-spec-ids.sh` (via `scripts/lib/spec-id.sh`) |
 | Spec + Features approved before code (committed before the first `src/` commit); re-read on "approved" | `judgment:review-engine-boundary` |
-| Code-first small batches; refactor evidence per batch; tests frozen in refactor | `judgment:review-engine-boundary` (and each code reviewer: `review-determinism`, `review-save-and-replay-compat`, `review-content-schema`, `review-sim-performance`, `review-asset-pipeline`) |
+| Code-first small batches; refactor evidence per batch; tests frozen in refactor | `judgment:review-engine-boundary` (code-first, tests frozen, refactor evidence); refactor evidence also by each code reviewer: `review-determinism`, `review-save-and-replay-compat`, `review-content-schema`, `review-sim-performance`, `review-asset-pipeline` |
 | Size honest (small has at most six scenarios) | `judgment:spec-consistency` |
 | Budget per branch | `scripts/check-budget.sh` |
 | Reviewers may not raise the bar above the Spec | `judgment:review-process-drift` |
