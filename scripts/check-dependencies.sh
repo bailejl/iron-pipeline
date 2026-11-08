@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Every PackageReference/ProjectReference in src/**/*.csproj must be listed under that project in
-# dependencies.allowed; Sim has none; Sim has no standard-format handling code (that is IronPipeline.Content).
+# dependencies.allowed; Sim has none; Sim does no I/O and no text-format parsing (that is IronPipeline.Content).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 status=0
@@ -28,12 +28,19 @@ while IFS= read -r csproj; do
   done <<< "$refs"
 done < <(find src -name '*.csproj' -not -path '*/obj/*' -not -path '*/bin/*' | sort)
 
-# Heuristic for hand-rolled standard-format handling inside Sim.
+# Sim does no I/O and no text-format parsing (that is IronPipeline.Content). Content check, not a filename heuristic.
+# Exception: '// dependency: ok <reason>' on the offending line, reviewed by review-engine-boundary.
+io_re='(^|[^A-Za-z0-9_.])(File|Directory|Path)\.|System\.IO([^A-Za-z0-9_]|$)|StreamReader|TextReader|YamlDotNet|System\.Text\.Json|Regex'
 while IFS= read -r f; do
-  if ! head -n1 "$f" | grep -qE '^// dependency: ok .+'; then
-    fail "$f: standard-format handling belongs in IronPipeline.Content (or mark line 1 '// dependency: ok <reason>')"
-  fi
-done < <(find src/IronPipeline.Sim -type f \( -name '*Parser*' -o -name '*Yaml*' -o -name '*Json*' -o -name '*Csv*' -o -name '*Toml*' -o -name '*Serializer*' \) -not -path '*/obj/*' -not -path '*/bin/*')
+  while IFS= read -r hit; do
+    line=${hit#*:}
+    case "$line" in *[![:space:]]*) ;; *) continue ;; esac
+    trimmed=${line#"${line%%[![:space:]]*}"}
+    case "$trimmed" in //*) continue ;; esac
+    if printf '%s' "$line" | grep -qE '//[[:space:]]*dependency: ok .+'; then continue; fi
+    fail "$f:${hit%%:*}: I/O or text-format handling in Sim ('${trimmed}'); move it to IronPipeline.Content or mark the line '// dependency: ok <reason>'"
+  done < <(grep -nE "$io_re" "$f" || true)
+done < <(find src/IronPipeline.Sim -type f -name '*.cs' -not -path '*/obj/*' -not -path '*/bin/*' | sort)
 
 [ $status -eq 0 ] && echo "dependencies: OK"
 exit $status
