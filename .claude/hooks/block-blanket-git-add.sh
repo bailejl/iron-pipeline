@@ -1,6 +1,7 @@
 #!/bin/sh
 # PreToolUse(Bash) hook: deny blanket staging. Stage named paths only (issue #18).
-# Denies: git add -A | --all | . ; git commit -a | -am | --all
+# Denies: git add -A | --all | -u | --update | . | ./ | :/ ; git commit -a | -am | --all
+# Known limit: a quoted message that is exactly one flag-like token (e.g. -m "-a") is denied.
 set -eu
 command -v jq >/dev/null 2>&1 || { echo "block-blanket-git-add: jq required" >&2; exit 2; }
 payload="$(cat)"
@@ -17,11 +18,12 @@ flat="$(printf '%s\n' "$cmd" \
       }' \
   | sed -e ':a' -e '/\\$/{N;s/\\\n/ /;ba' -e '}' \
   | tr '\n' '\001' \
+  | sed -E "s/[\"']([-.:][^\"' ]*)[\"']/\1/g" \
   | sed -E "s/\"[^\"]*\"//g; s/'[^']*'//g" \
   | tr '\001' ';')"
 sep='([[:space:]]|$|[;&|)])'
-add="git[[:space:]]+([^;&|]*[[:space:]])?add[[:space:]]+([^;&|]*[[:space:]])?(-[a-zA-Z]*A[a-zA-Z]*|--all|\\.)$sep"
-com="git[[:space:]]+([^;&|]*[[:space:]])?commit[[:space:]]+([^;&|]*[[:space:]])?(-[a-zA-Z]*a[a-zA-Z]*|--all)$sep"
+add="git[[:space:]]+([^;&|]*[[:space:]])?add[[:space:]]+([^;&|]*[[:space:]])?(-[a-zA-Z]*[Au][a-zA-Z]*|--all|--update|\\./?|:/)$sep"
+com="git[[:space:]]+([^;&|]*[[:space:]])?commit[[:space:]]+([^;&|]*[[:space:]])?(-([a-tv-zA-Z][a-zA-Z]*)?a[a-zA-Z]*|--all)$sep"
 if printf '%s' "$flat" | grep -Eq "$add|$com"; then
   reason="Blanket staging is denied (git add -A / --all / . and git commit -a). Stage named paths only: git add <path> [<path>...]. Background tools (repowise) modify tracked files; blanket staging sweeps them into commits."
   jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
