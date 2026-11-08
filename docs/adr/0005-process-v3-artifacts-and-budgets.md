@@ -1,6 +1,6 @@
 # ADR 0005 — Process v3: Spec / Features / Plan, sizes, budgets, drift
 
-**Status:** accepted · **Date:** 2026-11-08 · **Amends:** ADR 0003 decision 1 ("Gherkin scenarios are written and human-approved before coding" becomes "a Spec and a Features file are approved before coding") and decision 5 (sizes "Small" / "Feature" become `small` / `planned`). ADR 0003 decisions 2–4 (code-first small batches, mandatory refactor with frozen tests, one coding agent) are unchanged.
+**Status:** accepted (decision 2 amended by ADR 0006) · **Date:** 2026-11-08 · **Amends:** ADR 0003 decision 1 ("Gherkin scenarios are written and human-approved before coding" becomes "a Spec and a Features file are approved before coding") and decision 5 (sizes "Small" / "Feature" become `small` / `planned`). ADR 0003 decisions 2–4 (code-first small batches, mandatory refactor with frozen tests, one coding agent) are unchanged.
 
 ## Context
 An analysis of https://github.com/bdfinst/vsm-workshop — the dev-team plugin used end to end on one 18-slice piece of work in October 2026 — is checked in at `docs/research/vsm-process-analysis.md`. It showed the highest-leverage

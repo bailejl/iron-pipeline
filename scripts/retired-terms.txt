@@ -19,3 +19,6 @@ re:\bfeature[- ](PR|spec|branch|batch|size|sized)s?\b
 re:\bfeature-sized\b
 re:\bper feature\b
 re:\bevery feature\b
+# v4: small specs now get the spec-consistency reviewer (ADR 0006); fixed small budget replaced by scenarios + 3
+re:No spec reviewers
+re:defaults: small 6/1
