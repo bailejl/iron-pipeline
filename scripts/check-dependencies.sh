@@ -29,6 +29,8 @@ while IFS= read -r csproj; do
 done < <(find src -name '*.csproj' -not -path '*/obj/*' -not -path '*/bin/*' | sort)
 
 # Sim does no I/O and no text-format parsing (that is IronPipeline.Content). Content check, not a filename heuristic.
+# Banned on any non-comment line of src/IronPipeline.Sim/**/*.cs: File./Directory./Path., System.IO, StreamReader, TextReader,
+# YamlDotNet, System.Text.Json, Regex. Partial by design: XML/CSV/TOML and I/O types not listed are caught by judgment:review-engine-boundary.
 # Exception: '// dependency: ok <reason>' on the offending line, reviewed by review-engine-boundary.
 io_re='(^|[^A-Za-z0-9_.])(File|Directory|Path)\.|System\.IO([^A-Za-z0-9_]|$)|StreamReader|TextReader|YamlDotNet|System\.Text\.Json|Regex'
 while IFS= read -r f; do

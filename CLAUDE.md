@@ -86,7 +86,7 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | Rule | Check |
 |---|---|
 | 1. Sim never references Godot | `scripts/check-engine-boundary.sh` |
-| 1/5. Sim references no packages or projects; Sim does no I/O and no text-format parsing (content check; `// dependency: ok <reason>` marker) | `scripts/check-dependencies.sh` + `judgment:review-engine-boundary` |
+| 1/5. Sim references no packages or projects; Sim does no I/O and no text-format parsing (content check on listed I/O and YAML/JSON/Regex patterns; other formats by judgment; `// dependency: ok <reason>` marker on the offending line) | `scripts/check-dependencies.sh` + `judgment:review-engine-boundary` |
 | 2. Game project contains no rules | `judgment:review-engine-boundary` |
 | 3. Determinism in Sim | `scripts/check-determinism.sh` + `judgment:review-determinism` |
 | 4. Every state change is a Command; replays reproduce the hash | `judgment:review-save-and-replay-compat` (golden replays via `verify.sh` once they exist) |
