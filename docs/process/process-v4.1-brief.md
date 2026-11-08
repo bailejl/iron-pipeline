@@ -76,7 +76,7 @@ code fix can cite the check that proves it.
 table, or in the table with neither a script nor a `judgment:` tag, is a finding; (2) any PR whose title or
 labels say fix/bug/incident but whose body lacks Cause / Cause fix / Check is a blocker.
 
-ADR 0007 "Fix causes, add checks" records the principle, the skill, the rule→check table and the templates.
+ADR 0008 "Fix causes, add checks" records the principle, the skill, the rule→check table and the templates.
 
 ---
 
@@ -163,7 +163,7 @@ the two scripts' patterns in sync.
   stale refs → budget → format → build → test.
 - `README.md` and `.claude/CLAUDE.md` command comments updated to match.
 - `scripts/retired-terms.txt`: add `re:[0-9]{4}[a-z]\b` so a suffixed id in any process doc is caught.
-- `docs/adr/0007-fix-causes-add-checks.md`: records §1 (principle, skill, rule→check table, templates) and
+- `docs/adr/0008-fix-causes-add-checks.md`: records §1 (principle, skill, rule→check table, templates) and
   cites §2 and §3 as the originating incidents.
 - `.claude/README.md`: add `root-cause-fix` to the skills table (preloaded by: coding session on any fix;
   `review-process-drift`).
@@ -192,7 +192,7 @@ Create branch 0000-process-v4.1 from main. Process-only PR; must run review-proc
 name; do not rewrite history; leave .claude/CLAUDE.md unstaged until the pr skill's chore(repowise) step.
 
 Implement the brief in this order: §1 (the root-cause-fix skill, CLAUDE.md rules and Rule → check table,
-templates, ADR 0007), then §2, then §3, then §4. For each new check, record the fail-then-pass verification
+templates, ADR 0008), then §2, then §3, then §4. For each new check, record the fail-then-pass verification
 exactly as §2 and §3 describe, and paste the output into the PR body.
 
 When §1–§4 are done: scripts/verify.sh; /dev-team:code-review including review-process-drift; fix errors

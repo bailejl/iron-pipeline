@@ -25,5 +25,6 @@ Trunk (`main`) is always green. Agents open PRs; they never merge, tag, or publi
    gh pr create --fill --base main
    ```
    PR body: follow `.github/PULL_REQUEST_TEMPLATE.md` — link the Spec (`docs/specs/NNNN-*.md`) and Features (`features/NNNN-*.feature`), list the scenarios covered (`S<NN>_...` tests), budget used, Decisions made at the build gate, Deferred (as issue links) and Not covered; note any save/replay version bump. End the body with the attribution line required by the session.
+5a. **Done-when gate.** The body's "Done-when criteria from the brief/Spec" section lists every item of the brief's "Done when" list (or the Spec's ACs), each checked only if it was met and verified. Refuse to open the PR with any unchecked item unless the title starts with `[incomplete]` and the body says which items are open and why, and asks the human to decide. Never check an item you did not verify.
 5b. **Fix PRs.** If the title or labels say fix / bug / incident, the body's "If this fixes something that went wrong" section must have Symptom, Cause, Cause fix and Check/Verified filled (`root-cause-fix` skill). Refuse to open the PR otherwise.
 6. Report the PR URL. Do not merge.
