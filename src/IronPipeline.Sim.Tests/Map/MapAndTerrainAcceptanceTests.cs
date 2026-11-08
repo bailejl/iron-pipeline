@@ -9,6 +9,28 @@ namespace IronPipeline.Sim.Tests.Map;
 public class MapAndTerrainAcceptanceTests
 {
     [Fact]
+    public void S01_MapHasWidthTimesHeightCells()
+    {
+        IReadOnlyList<TerrainType> types = TestContent.LoadTerrain();
+
+        HexMap map = HexMap.Filled(5, 3, types, types.Single(t => t.Id == "plains"));
+
+        Assert.Equal(5, map.Width);
+        Assert.Equal(3, map.Height);
+        Assert.Equal(15, map.CellCount);
+    }
+
+    [Fact]
+    public void S02_ZeroOrNegativeDimensionsAreRejected()
+    {
+        IReadOnlyList<TerrainType> types = TestContent.LoadTerrain();
+        TerrainType plains = types.Single(t => t.Id == "plains");
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => HexMap.Filled(0, 3, types, plains));
+        Assert.Throws<ArgumentOutOfRangeException>(() => HexMap.Filled(4, -1, types, plains));
+    }
+
+    [Fact]
     public void S07_TerrainTypesLoadFromContentWithCostAndDefense()
     {
         using TempDir dir = new();

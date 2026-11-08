@@ -1,0 +1,61 @@
+namespace IronPipeline.Sim.Map;
+
+/// <summary>
+/// Rectangular hex map stored as a flat byte array of indices into a terrain table.
+/// Rectangular means odd-r offset: row r in [0, Height), column c in [0, Width), pointy-top friendly.
+/// Axial hex (q, r) has column c = q + (r - (r &amp; 1)) / 2. Index = row * Width + column.
+/// </summary>
+public sealed class HexMap
+{
+    public const int MinSide = 1;
+    public const int MaxSide = 512;
+    public const int MaxTerrainTypes = 256;
+
+    private readonly byte[] _cells;
+
+    private HexMap(int width, int height, IReadOnlyList<TerrainType> terrainTypes, byte[] cells)
+    {
+        Width = width;
+        Height = height;
+        TerrainTypes = terrainTypes;
+        _cells = cells;
+    }
+
+    public int Width { get; }
+
+    public int Height { get; }
+
+    public int CellCount => _cells.Length;
+
+    public IReadOnlyList<TerrainType> TerrainTypes { get; }
+
+    /// <summary>A map where every cell is <paramref name="fill"/>, which must be one of <paramref name="terrainTypes"/>.</summary>
+    public static HexMap Filled(int width, int height, IReadOnlyList<TerrainType> terrainTypes, TerrainType fill)
+    {
+        ArgumentNullException.ThrowIfNull(terrainTypes);
+        ArgumentNullException.ThrowIfNull(fill);
+        ArgumentOutOfRangeException.ThrowIfLessThan(width, MinSide);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(width, MaxSide);
+        ArgumentOutOfRangeException.ThrowIfLessThan(height, MinSide);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(height, MaxSide);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(terrainTypes.Count, MaxTerrainTypes);
+
+        int fillIndex = IndexOfType(terrainTypes, fill);
+        byte[] cells = new byte[width * height];
+        Array.Fill(cells, (byte)fillIndex);
+        return new HexMap(width, height, terrainTypes, cells);
+    }
+
+    private static int IndexOfType(IReadOnlyList<TerrainType> terrainTypes, TerrainType type)
+    {
+        for (int i = 0; i < terrainTypes.Count; i++)
+        {
+            if (ReferenceEquals(terrainTypes[i], type))
+            {
+                return i;
+            }
+        }
+
+        throw new ArgumentException($"Terrain '{type.Id}' is not in the map's terrain table.", nameof(type));
+    }
+}
