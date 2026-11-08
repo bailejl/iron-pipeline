@@ -15,4 +15,4 @@ Check, citing both sides of each disagreement:
 4. Every rule in the relevant `content/schemas/` file is covered by a scenario (and an AC says the loader enforces them).
 5. Every row in the Numbers table has a tolerance (or `exact`) and a range.
 6. Geometry/layout decisions have literal coordinate examples in a scenario.
-7. Size honesty: small has at most six scenarios; Budget is scenarios + 3 for small.
+7. Size honesty: small has at most six scenarios; Budget is scenarios + 3 for small unless the Spec explains a different number.

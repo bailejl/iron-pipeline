@@ -15,6 +15,7 @@ Three artifacts, three names, never mixed. The words "spec", "features" and "pla
 Templates: `docs/specs/TEMPLATE.md`, `features/TEMPLATE.feature`. Worked example: 0001.
 
 ## Rules
+- **On "approved", re-read the Spec and Features files from disk** before acting; the human may have edited them.
 - **Every change has a Spec and a Features file**, even a bug fix (a Spec can be ten lines; "no decisions" is a valid log).
 - **Numbers live in the Spec, with a tolerance or `exact`.** A value with no tolerance is not approvable. Values then go to `content/`, never into C#.
 - **Ambiguity Log:** before writing ACs, list every open question. Try to infer; if one plausible alternative exists that the repo does not rule out, it is `human`, and the human answers it before approval. "Inferable" is not a convenient default. If you can offer a guess, the decision is inferable — write the guess as the rationale. `human` is reserved for decisions where two defensible answers lead to different games.

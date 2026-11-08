@@ -2,7 +2,7 @@
 
 **Status:** draft | approved | implemented
 **Size:** small | planned        <!-- small = single agent + gates + spec-consistency, at most six scenarios; planned = plans/NNNN-<name>.md + full pipeline -->
-**Budget:** 6 commits, 1 review round   <!-- default small = scenarios + 3 commits (review fixes included, own commit), 1 round; planned slice 15/2. Exceeding = stop, defer, escalate -->
+**Budget:** <scenarios+3> commits, 1 review round   <!-- default small = scenarios + 3 commits (review fixes included, own commit), 1 round; planned slice 15/2. Exceeding = stop, defer, escalate -->
 **Pillar(s):** logistics tension | big maps | readable tactics | distinct factions
 **Features:** features/NNNN-<name>.feature
 **Plan:** plans/NNNN-<name>.md (planned only)

@@ -1,6 +1,6 @@
 # ADR 0006 — Spec consistency review for small Specs
 
-**Status:** accepted · **Date:** 2026-11-08 · **Amends:** ADR 0005 decision 2 (task sizes), which said small specs get no spec reviewers.
+**Status:** accepted · **Date:** 2026-11-08 · **Amends:** ADR 0003 decision 5 / ADR 0005 decision 2 (task sizes), under which small specs get no spec reviewers, and decision 3 (budgets): the small default becomes number of scenarios + 3 commits (review fixes included, in their own commit), 1 review round; the planned-slice default stays 15/2. Process v4 also overrides ADR 0005's "no further process changes" freeze, on the retro evidence from spec 0002 (issues #18–#20).
 
 ## Context
 Spec 0002 (small) shipped with mechanical gaps a cold read of the Spec and Features would likely have caught: a Given said 3 content files when there were 4 types; two Features invariants (round-trip, determinism) were not implementable from the stated API; schema rules had no AC. The cost was fix commits after the budget was spent (issue #20).

@@ -1,6 +1,6 @@
 # ADR 0005 — Process v3: Spec / Features / Plan, sizes, budgets, drift
 
-**Status:** accepted (decision 2 amended by ADR 0006) · **Date:** 2026-11-08 · **Amends:** ADR 0003 decision 1 ("Gherkin scenarios are written and human-approved before coding" becomes "a Spec and a Features file are approved before coding") and decision 5 (sizes "Small" / "Feature" become `small` / `planned`). ADR 0003 decisions 2–4 (code-first small batches, mandatory refactor with frozen tests, one coding agent) are unchanged.
+**Status:** accepted (decisions 2 and 3 amended by ADR 0006) · **Date:** 2026-11-08 · **Amends:** ADR 0003 decision 1 ("Gherkin scenarios are written and human-approved before coding" becomes "a Spec and a Features file are approved before coding") and decision 5 (sizes "Small" / "Feature" become `small` / `planned`). ADR 0003 decisions 2–4 (code-first small batches, mandatory refactor with frozen tests, one coding agent) are unchanged.
 
 ## Context
 An analysis of https://github.com/bdfinst/vsm-workshop — the dev-team plugin used end to end on one 18-slice piece of work in October 2026 — is checked in at `docs/research/vsm-process-analysis.md`. It showed the highest-leverage
@@ -19,7 +19,7 @@ repo states — and process drift (Cucumber removed, local skills still describi
    including a bug fix, has a Spec and a Features file.
    **Budgets are per branch.** Planned work uses one branch and one PR per slice, so a slice budget and a branch
    budget are the same thing; `check-budget.sh` counts the branch.
-3. **Budgets.** The Spec header sets commits and review rounds (small 6/1; planned slice 15/2).
+3. **Budgets.** The Spec header sets commits and review rounds (small: scenarios + 3 per ADR 0006, formerly 6/1; planned slice 15/2).
    `scripts/check-budget.sh` fails `verify.sh` past the commit limit; the only allowed response is stop → defer to
    issues → escalate. Reviewers may not demand a bar the Spec does not set; a stricter bar is a `spec-change`
    finding for the human.

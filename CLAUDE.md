@@ -10,7 +10,7 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 2. **The Godot project (`src/IronPipeline.Game`) contains no rules.** It renders Sim state and submits `Command`s.
 3. **Determinism in Sim.** Full rules in the `determinism-rules` skill — load it before writing Sim code. `scripts/check-determinism.sh` enforces the greppable parts.
 4. **Every state change is a serializable `Command`.** `Apply(state, command)` is the only mutation path. Replays must reproduce the same state hash.
-5. **Sim takes no third-party packages.** `IronPipeline.Sim` references nothing outside the BCL. Content parsing (YAML etc.) belongs in a separate `IronPipeline.Content` project where YamlDotNet is allowed; Sim receives parsed data. (Existing parser code moves in a follow-up spec, not before.)
+5. **Sim takes no third-party packages.** `IronPipeline.Sim` is to reference nothing outside the BCL (target state; the hand-rolled YAML parser from spec 0002 is the only known gap, tracked in a follow-up issue). Content parsing (YAML etc.) belongs in a separate `IronPipeline.Content` project where YamlDotNet is allowed; Sim receives parsed data. (Existing parser code moves in a follow-up spec, not before.)
 6. **Content is data.** Units, terrain, factions, scenarios live in `content/**/*.yaml` with a schema in `content/schemas/`. Balance numbers never hard-coded in C#.
 7. **Hexes are pointy-top in presentation; Sim is orientation-agnostic** (axial/cube coordinates, `HexCoord`). Layout math and Game-layer conventions: `godot-presentation` skill.
 8. **Domain language** (hex, unit, stack, ZOC, supply line, depot, truck, MP, fuel, ammo) and the Command/GameState model: `wargame-domain` skill. Spec layout and scenario→test mapping: `spec-format` skill.
@@ -67,7 +67,7 @@ src/IronPipeline.Tools      replay/validate/selfplay CLI
 src/IronPipeline.Game       Godot 4.7 project (opens with Godot .NET; Godot generates its own .sln here)
 docs/gdd.md  docs/adr/  docs/specs/ (Spec .md)  features/ (Gherkin)  plans/  docs/playtest/  docs/handoff/
 content/  assets/  assets-src/  scripts/  .github/workflows/
-.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, test-conventions, godot-presentation, asset-pipeline, playtest-checklist
+.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, test-conventions, godot-presentation, asset-pipeline, playtest-checklist, pr
 .claude/agents/   isolated read-only reviewers that preload those skills
 ```
 
