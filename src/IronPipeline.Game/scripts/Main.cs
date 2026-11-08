@@ -32,7 +32,7 @@ public partial class Main : Node2D
     {
         float x = HexSize * (Mathf.Sqrt(3f) * h.Q + Mathf.Sqrt(3f) / 2f * h.R);
         float y = HexSize * (1.5f * h.R);
-        return new Vector2(x, y) + new Vector2(960f, 540f);
+        return new Vector2(x, y);
     }
 
     private void DrawHex(Vector2 center, Color fill)

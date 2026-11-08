@@ -37,3 +37,5 @@ assets-src/out/
 # dev-team hygiene — machine-specific MCP config (absolute-path pollution — issues #1376, #1416)
 .mcp.json
 .claude/code-intelligence-turn-state.json*
+
+!.vscode/settings.json
