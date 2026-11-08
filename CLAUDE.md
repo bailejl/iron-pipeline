@@ -19,7 +19,7 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 - **Features** = `features/NNNN-<name>.feature` — Gherkin only.
 - **Plan** = `plans/NNNN-<name>.md` — from `/dev-team:plan`, **planned**-size work only.
 - Sizes are **small** and **planned**. The word "feature" is never a size.
-- We do **not** use `/dev-team:specs` (its output would collide with `docs/specs/`); write the Spec from `docs/specs/TEMPLATE.md`. `/dev-team:plan` always takes `--output plans/NNNN-<name>.md`.
+- We do **not** use `/dev-team:specs` (its output would collide with `docs/specs/`); write the Spec from `docs/specs/TEMPLATE.md`. `/dev-team:plan` always takes `--output plans/NNNN-<name>.md`, copies the approved Features scenarios verbatim (same S-IDs; no new ones), and uses `Gherkin persistence: plan-file-only`.
 
 ## How to work (ADR 0003, ADR 0005)
 - **Spec + Features first, then code-first.** Every change — including a bug fix — has an approved Spec and Features file before any code. Then implement **code-first in small batches**: one behavior → its test → green → **refactor** → commit. Repeat.
