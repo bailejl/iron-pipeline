@@ -8,8 +8,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 # Branch: local HEAD, or the PR head ref when CI checks out a detached HEAD.
+in_ci_pr=0
 branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)
-if [ "$branch" = "HEAD" ]; then branch="${GITHUB_HEAD_REF:-${CI_BRANCH:-HEAD}}"; fi
+if [ "$branch" = "HEAD" ] && [ -n "${GITHUB_HEAD_REF:-}" ]; then branch="$GITHUB_HEAD_REF"; in_ci_pr=1; fi
 if [ "$branch" = "HEAD" ]; then echo "budget: n/a (detached HEAD, no GITHUB_HEAD_REF)"; exit 0; fi
 if [ "$branch" = "main" ]; then echo "budget: n/a (main)"; exit 0; fi
 
@@ -26,16 +27,17 @@ if [ "$(grep -ciE '^\**Budget:\**' "$spec")" -gt 1 ]; then
   echo "BUDGET: $spec has more than one Budget line; keep exactly one." >&2; exit 1
 fi
 
-# Base: local main, else origin/main. Fail loudly if neither exists.
+# Base: origin/main when present (local main may be stale), else main. Fail loudly if neither exists.
 base_ref=""
-for r in main origin/main; do
+for r in origin/main main; do
   if git rev-parse --verify -q "$r" >/dev/null; then base_ref="$r"; break; fi
 done
 if [ -z "$base_ref" ]; then echo "BUDGET: neither 'main' nor 'origin/main' exists; cannot compute base." >&2; exit 1; fi
-# On a PR, CI checks out a synthetic merge commit (HEAD^1 = base branch, HEAD^2 = PR head).
-# Count the PR side against the base side; otherwise count HEAD against main.
+# In a CI pull_request run, HEAD is a synthetic merge commit (HEAD^1 = base, HEAD^2 = PR head):
+# count the PR side against the base side. Locally, HEAD may be a merge too (git merge main), so
+# the CI path is taken only when GITHUB_HEAD_REF is set.
 head=HEAD
-if git rev-parse --verify -q HEAD^2 >/dev/null; then
+if [ "$in_ci_pr" = 1 ] && git rev-parse --verify -q HEAD^2 >/dev/null; then
   head=HEAD^2; base=$(git merge-base HEAD^1 HEAD^2)
 else
   base=$(git merge-base HEAD "$base_ref")

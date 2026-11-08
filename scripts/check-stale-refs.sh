@@ -2,9 +2,9 @@
 # Drift check: retired terms must not appear in process docs. Add a term the same PR you retire it.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-targets=(CLAUDE.md README.md .claude docs features plans)
+targets=(CLAUDE.md README.md .claude .github docs features plans)
 status=0
-while IFS= read -r line; do
+while IFS= read -r line || [ -n "$line" ]; do
   [ -z "$line" ] && continue; [[ "$line" == \#* ]] && continue
   if [[ "$line" == re:* ]]; then
     flags=(-rniE); term="${line#re:}"
@@ -12,7 +12,7 @@ while IFS= read -r line; do
     flags=(-rniwF); term="$line"
   fi
   set +e
-  raw=$(grep "${flags[@]}" --include='*.md' --include='*.feature' --include='*.txt' \
+  raw=$(grep "${flags[@]}" --include='*.md' --include='*.feature' --include='*.txt' --include='*.yml' \
           --exclude-dir=adr --exclude-dir=research --exclude-dir=worktrees --exclude-dir=memory \
           -- "$term" "${targets[@]}" 2>&1); rc=$?
   set -e

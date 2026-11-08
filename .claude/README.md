@@ -6,7 +6,7 @@
 |---|---|
 | `determinism-rules` | coding session, `review-determinism`, `review-save-and-replay-compat`, `spec-determinism-and-replay` |
 | `wargame-domain` | coding session, `spec-*`, `review-engine-boundary`, `review-sim-performance`, `review-content-schema` |
-| `spec-format` | `/specs`, `spec-*`, `review-content-schema`, `review-process-drift` |
+| `spec-format` | coding session (writing a Spec from the template), `spec-*`, `review-content-schema`, `review-process-drift` |
 | `test-conventions` | coding session, `review-determinism`, `review-save-and-replay-compat` |
 | `godot-presentation` | anyone touching `src/IronPipeline.Game`, `spec-ux-wargame`, `review-engine-boundary` |
 | `playtest-checklist` | invoked as `/playtest-checklist NNNN` once per planned-size, player-facing PR |

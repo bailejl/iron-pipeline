@@ -19,15 +19,16 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 - **Features** = `features/NNNN-<name>.feature` — Gherkin only.
 - **Plan** = `plans/NNNN-<name>.md` — from `/dev-team:plan`, **planned**-size work only.
 - Sizes are **small** and **planned**. The word "feature" is never a size.
+- We do **not** use `/dev-team:specs` (its output would collide with `docs/specs/`); write the Spec from `docs/specs/TEMPLATE.md`. `/dev-team:plan` always takes `--output plans/NNNN-<name>.md`.
 
-## How to work (ADR 0003)
+## How to work (ADR 0003, ADR 0005)
 - **Spec + Features first, then code-first.** Every change — including a bug fix — has an approved Spec and Features file before any code. Then implement **code-first in small batches**: one behavior → its test → green → **refactor** → commit. Repeat.
 - **Refactor every batch.** Run the structure/complexity lens on what you just wrote. **Tests are frozen during refactor**: if a refactor needs a test change, stop, revert the refactor, and treat it as a behavior change in the next batch.
 - **One coding agent.** Do not spawn a separate tester agent.
 - **Size the task (set in the Spec header):**
   - **small** (bug fix, one-file change, content/balance tweak, single-slice rule): Spec + Features → human approval → implement directly → `scripts/verify.sh` → PR. No spec reviewers, no review fan-out.
-  - **planned** (multi-slice, new system, UI): Spec + Features → spec reviewers (`.claude/agents/spec-*`) → human approval → `/dev-team:plan` → human approves plan → `/dev-team:build` per slice → `scripts/verify.sh` → code reviewers (`.claude/agents/review-*`) → `/playtest-checklist NNNN` → PR per slice.
-- **Budget.** The Spec header sets `Budget: N commits, M review rounds` (defaults: small 6/1, planned slice 15/2). `scripts/check-budget.sh` fails `verify.sh` when exceeded. At that point the only allowed move is: stop, write remaining work into the PR's "Deferred" section, open issues, escalate to the human. Never keep polishing past budget.
+  - **planned** (multi-slice, new system, UI): Spec + Features → spec reviewers (`.claude/agents/spec-*`) → human approval → `/dev-team:plan --output plans/NNNN-<name>.md` → human approves plan → `/dev-team:build` per slice (one branch `NNNN-<name>-sN`, one PR per slice) → `scripts/verify.sh` → code reviewers (`.claude/agents/review-*`) → `/playtest-checklist NNNN` → PR per slice.
+- **Budget.** The Spec header sets `Budget: N commits, M review rounds` (defaults: small 6/1, planned slice 15/2). Budgets are **per branch**; planned work uses one branch and one PR per slice, so slice budget = branch budget. `scripts/check-budget.sh` fails `verify.sh` when exceeded. At that point the only allowed move is: stop, write remaining work into the PR's "Deferred" section, open issues, escalate to the human. Never keep polishing past budget.
 - **Reviewers may not raise the bar above the Spec.** A stricter bar is a `spec-change` finding for the human, never a fix request. Numbers in the Spec carry tolerances for exactly this reason.
 - **Deferred work becomes a GitHub issue** (`gh issue create`), never "later slice N" in prose. Agents may open issues. One standing issue, "needs a person", collects playtests and visual checks.
 - **Handoff.** For any in-progress planned work, keep `docs/handoff/HANDOFF-NNNN-<name>.md` (template there) current: decisions in force, next steps. Delete it on merge.
@@ -44,7 +45,7 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 ## One command
 `scripts/verify.sh` — format check, build (warnings as errors), tests, engine-boundary, determinism, asset-manifest, stale-reference and budget checks. CI runs the same script. Run it before every PR.
 
-Process-only PRs (no `src/` changes): run `/dev-team:code-review` with `review-process-drift`. dev-team's pre-PR hook requires the gate file that `/code-review` writes; its bypass (`PR_GATE_BYPASS_REASON="<why>"` in the environment when running `/pr`) is allowed only when the review short-circuited as docs-only, and the reason must say so.
+Process-only PRs (no `src/` changes): `/dev-team:code-review` **must** include `review-process-drift`; a process PR without that agent's result is not reviewed. dev-team's pre-PR hook requires the gate file that `/code-review` writes; its bypass (`PR_GATE_BYPASS_REASON="<why>"` in the environment when running `/pr`) is allowed only when the review short-circuited as docs-only, and the reason must say so.
 
 ## Conventions
 - C#: file-scoped namespaces, `readonly record struct` for value types, `sealed` by default, no `var` for built-in types. `dotnet format` is the arbiter.

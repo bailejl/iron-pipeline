@@ -8,6 +8,7 @@ By AC / plan step:
 ## Verification
 - [ ] `scripts/verify.sh` green (paste the last line)
 - [ ] Acceptance tests: S__–S__ pass (`dotnet test` count: )
+- [ ] Save/replay format version: unchanged | bumped to N (migration: yes/no)
 - [ ] Golden replays unchanged — or changed intentionally because:
 - [ ] Exported build launched (platform: )
 - [ ] **Not verified:** <anything not run, and why>

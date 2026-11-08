@@ -1,6 +1,6 @@
 # One entry per line. Plain lines are whole-word, case-insensitive fixed strings.
 # Lines starting with "re:" are extended regexes.
-# Grepped across CLAUDE.md, .claude/ (not worktrees/ or memory/), docs/ (not adr/ or research/), features/, plans/, README.md.
+# Grepped across CLAUDE.md, README.md, .claude/ (not worktrees/ or memory/), .github/, docs/ (not adr/ or research/), features/, plans/.
 # A line that must mention a retired term may carry:  retired: ok <reason>
 TDD
 test-first
@@ -12,7 +12,7 @@ docs/scenarios
 playtest-checklist-writer
 # The pre-v3 layout: Gherkin under docs/specs, and "feature" as a task size
 re:docs/specs/[^ )`]*\.feature
-re:Size:[[:space:]]*(small[[:space:]]*\|[[:space:]]*)?feature\b
+re:\**Size:\**[[:space:]]*(small[[:space:]]*\|[[:space:]]*)?feature\b
 re:\*(Feature)\*[[:space:]]*\(multi-file
 # "feature" as a unit of work (sizes are small/planned; the artifact is "Features")
 re:\bfeature[- ](PR|spec|branch|batch|size|sized)s?\b
