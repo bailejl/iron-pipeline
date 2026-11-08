@@ -42,7 +42,8 @@ if [ "$in_ci_pr" = 1 ] && git rev-parse --verify -q HEAD^2 >/dev/null; then
 else
   base=$(git merge-base HEAD "$base_ref")
 fi
-count=$(git rev-list --count --no-merges "$base".."$head")
+# chore(repowise) commits (index refresh, see CLAUDE.md) are not counted.
+count=$(git log --no-merges --format=%s "$base".."$head" | { grep -vc '^chore(repowise)' || true; })
 
 if [ "$count" -gt "$limit" ]; then
   echo "BUDGET EXCEEDED: $count commits on '$branch', budget $limit ($spec)." >&2

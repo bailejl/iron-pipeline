@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# .claude/CLAUDE.md is plugin config (repowise block), not process docs: excluded.
 # Drift check: retired terms must not appear in process docs. Add a term the same PR you retire it.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -17,7 +18,7 @@ while IFS= read -r line || [ -n "$line" ]; do
           -- "$term" "${targets[@]}" 2>&1); rc=$?
   set -e
   if [ $rc -ge 2 ]; then echo "check-stale-refs: grep failed for '$line': $raw" >&2; exit 2; fi
-  hits=$(printf '%s\n' "$raw" | grep -v 'retired: ok' | grep -v '^scripts/retired-terms.txt' | grep -v '^$' || true)
+  hits=$(printf '%s\n' "$raw" | grep -v 'retired: ok' | grep -v '^\.claude/CLAUDE\.md:' | grep -v '^scripts/retired-terms.txt' | grep -v '^$' || true)
   if [ -n "$hits" ]; then echo "STALE REFERENCE to retired '$line':"; echo "$hits"; status=1; fi
 done < scripts/retired-terms.txt
 [ $status -eq 0 ] && echo "stale refs: OK"
