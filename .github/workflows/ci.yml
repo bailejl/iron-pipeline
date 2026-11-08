@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   sim:
-    name: sim (verify.sh — format, build, test, boundary, determinism, manifest, stale-refs, budget)
+    name: sim (format, build, test, boundary, determinism)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
