@@ -3,7 +3,7 @@ using IronPipeline.Sim.Hex;
 namespace IronPipeline.Sim.Tests.Hex;
 
 /// <summary>
-/// One test per scenario in docs/specs/0001-hex-coordinates.feature.
+/// One test per scenario in features/0001-hex-coordinates.feature (spec: docs/specs/0001-hex-coordinates.md).
 /// Test names start with the scenario ID so the spec-compliance reviewer can map them.
 /// </summary>
 public class HexCoordAcceptanceTests

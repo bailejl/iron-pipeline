@@ -5,7 +5,7 @@
 ## One-liner
 A turn-based hex wargame about modern-era combined arms where **logistics is the game**: you win by keeping your spearheads fed and starving the enemy's.
 
-## Pillars (every feature must serve at least one)
+## Pillars (every Spec must serve at least one)
 1. **Logistics tension** — fuel, ammunition and supply lines are visible, scarce, and attackable. Running dry is the most common way to lose.
 2. **Big maps** — operations, not skirmishes. Depth matters; flanks are real.
 3. **Readable tactics** — the player can always see why something happened. No hidden dice, no opaque modifiers; replays are first-class.
@@ -22,15 +22,15 @@ Select unit → see reachable hexes and supply state → move / attack → end t
 ## Systems (status)
 | System | Status | Spec |
 |---|---|---|
-| Hex coordinates | done | `docs/specs/0001-hex-coordinates.feature` |
-| Map & terrain costs | planned | 0002 |
-| Pathfinding | planned | 0003 |
-| Units, movement points, fuel, ammo | planned | 0004 |
-| Turn / phase state machine | planned | 0005 |
-| Combat v0 | planned | 0006 |
-| Supply v0 (depots, trucks, consumption) | planned | 0007 |
-| Replay & state hash | planned | 0008 |
-| Zones of control | planned — **Sunday pipeline test** | 0009 |
+| Hex coordinates | done | `docs/specs/0001-hex-coordinates.md` + `features/0001-hex-coordinates.feature` |
+| Map & terrain costs | todo | 0002 |
+| Pathfinding | todo | 0003 |
+| Units, movement points, fuel, ammo | todo | 0004 |
+| Turn / phase state machine | todo | 0005 |
+| Combat v0 | todo | 0006 |
+| Supply v0 (depots, trucks, consumption) | todo | 0007 |
+| Replay & state hash | todo | 0008 |
+| Zones of control | todo — **Sunday pipeline test** | 0009 |
 
 ## Presentation
 2D, pointy-top hexes, programmatic NATO-style counters first, illustrated units later.

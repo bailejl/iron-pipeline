@@ -14,30 +14,44 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 6. **Hexes are pointy-top in presentation; Sim is orientation-agnostic** (axial/cube coordinates, `HexCoord`). Layout math and Game-layer conventions: `godot-presentation` skill.
 7. **Domain language** (hex, unit, stack, ZOC, supply line, depot, truck, MP, fuel, ammo) and the Command/GameState model: `wargame-domain` skill. Spec layout and scenario→test mapping: `spec-format` skill.
 
-## How to work (ADR 0003)
-- **Spec first, then code-first.** A feature has an approved `docs/specs/NNNN-*.feature` before any code. Then implement **code-first in small batches**: one behavior → its test → green → **refactor** → commit. Repeat.
+## Vocabulary (exact; see `spec-format` skill)
+- **Spec** = `docs/specs/NNNN-<name>.md` — intent, Numbers (with tolerances), Decisions & Ambiguity Log, ACs, Size, Budget.
+- **Features** = `features/NNNN-<name>.feature` — Gherkin only.
+- **Plan** = `plans/NNNN-<name>.md` — from `/dev-team:plan`, **planned**-size work only.
+- Sizes are **small** and **planned**. The word "feature" is never a size.
+- We do **not** use `/dev-team:specs` (its output would collide with `docs/specs/`); write the Spec from `docs/specs/TEMPLATE.md`. `/dev-team:plan` always takes `--output plans/NNNN-<name>.md`, copies the approved Features scenarios (same S-IDs and steps, plus `# Still passes if:` comments; no new ones; Features wins on any difference), and the plan file is pre-seeded with `**Gherkin persistence**: plan-file-only`.
+
+## How to work (ADR 0003, ADR 0005)
+- **Spec + Features first, then code-first.** Every change — including a bug fix — has an approved Spec and Features file before any code. Then implement **code-first in small batches**: one behavior → its test → green → **refactor** → commit. Repeat.
 - **Refactor every batch.** Run the structure/complexity lens on what you just wrote. **Tests are frozen during refactor**: if a refactor needs a test change, stop, revert the refactor, and treat it as a behavior change in the next batch.
 - **One coding agent.** Do not spawn a separate tester agent.
-- **Size the task:**
-  - *Small* (bug fix, one-file change, content/balance tweak): implement directly; run `scripts/verify.sh`; open PR. No spec reviewers, no review fan-out.
-  - *Feature* (multi-file, new rule or UI): full pipeline — spec → spec reviewers (`.claude/agents/spec-*`) → human approval → implement → `scripts/verify.sh` → code reviewers (`.claude/agents/review-*`) → `/playtest-checklist NNNN` → PR.
-- **Small commits** on a feature branch/worktree; trunk (`main`) is always green and shippable.
+- **Size the task (set in the Spec header):**
+  - **small** (bug fix, one-file change, content/balance tweak, single-slice rule): Spec + Features → human approval → implement directly → `scripts/verify.sh` → PR. No spec reviewers, no review fan-out.
+  - **planned** (multi-slice, new system, UI): Spec + Features → spec reviewers (`.claude/agents/spec-*`) → human approval → `/dev-team:plan --output plans/NNNN-<name>.md` → human approves plan → `/dev-team:build` per slice (one branch `NNNN-<name>-sN`, one PR per slice) → `scripts/verify.sh` → code reviewers (`.claude/agents/review-*`) → `/playtest-checklist NNNN` → PR per slice.
+- **Budget.** The Spec header sets `Budget: N commits, M review rounds` (defaults: small 6/1, planned slice 15/2). Budgets are **per branch**; planned work uses one branch and one PR per slice, so slice budget = branch budget. `scripts/check-budget.sh` fails `verify.sh` when exceeded. At that point the only allowed move is: stop, write remaining work into the PR's "Deferred" section, open issues, escalate to the human. Never keep polishing past budget.
+- **Reviewers may not raise the bar above the Spec.** A stricter bar is a `spec-change` finding for the human, never a fix request. Numbers in the Spec carry tolerances for exactly this reason.
+- **Deferred work becomes a GitHub issue** (`gh issue create`), never "later slice N" in prose. Agents may open issues. One standing issue, "needs a person", collects playtests and visual checks.
+- **Handoff.** For any in-progress planned work, keep `docs/handoff/HANDOFF-NNNN-<name>.md` (template there) current: decisions in force, next steps. Delete it on merge.
+- **Retiring anything** (a tool, a path, a convention, a name) is not done until the term is in `scripts/retired-terms.txt` and `scripts/check-stale-refs.sh` passes. The `review-process-drift` agent runs on any PR touching CLAUDE.md, ADRs, skills, agents or templates.
+- **Small commits** on a spec branch (`NNNN-<name>`) or worktree; trunk (`main`) is always green and shippable.
 - **Red pipeline = only fixes.** If `main` is red, no new features until it's green (Agentic CD constraint 8).
 - **Never promote.** Agents never tag releases or publish builds; they open PRs (Agentic CD constraint 7).
 
-## Tests
-- One xUnit test per Gherkin scenario, named `S<NN>_<Scenario>` in `IronPipeline.Sim.Tests`, mirroring the spec's scenario IDs.
-- Property tests (FsCheck) for invariants. Golden replays under `tests/replays/` once spec 0008 lands.
+## Tests (full rules: `test-conventions` skill — load it before writing tests)
+- One xUnit test per scenario, named `S<NN>_<Scenario>` in `IronPipeline.Sim.Tests`, mirroring the Features file's IDs.
+- Property tests (FsCheck) for invariants. Golden replays under `tests/replays/` once spec 0008 lands. Seed state with builders; never command through setup; no sleeps; never assert on engine internals.
 - No coverage targets. Do not add tests to raise coverage. Mutation testing runs weekly as a health metric only.
 
 ## One command
-`scripts/verify.sh` — format check, build (warnings as errors), tests, engine-boundary and determinism checks. CI runs the same script. Run it before every PR.
+`scripts/verify.sh` — format check, build (warnings as errors), tests, engine-boundary, determinism, asset-manifest, stale-reference and budget checks. CI runs the same script. Run it before every PR.
+
+Process-only PRs (no `src/` changes): `/dev-team:code-review` **must** include `review-process-drift`; a process PR without that agent's result is not reviewed. dev-team's pre-PR hook requires the gate file that `/code-review` writes; its bypass (`PR_GATE_BYPASS_REASON="<why>"` in the environment when running `/pr`) is allowed only when the review short-circuited as docs-only, and the reason must say so.
 
 ## Conventions
 - C#: file-scoped namespaces, `readonly record struct` for value types, `sealed` by default, no `var` for built-in types. `dotnet format` is the arbiter.
 - Namespaces mirror folders: `IronPipeline.Sim.Hex`, `IronPipeline.Sim.Supply`, …
 - Public Sim API is small and intention-revealing: `GameState`, `Command`s, `Rules.Apply`, queries. Domain language: hex, unit, stack, ZOC, supply line, depot, truck, MP (movement points), fuel, ammo.
-- Specs: numbers in the spec's Numbers table, then in `content/`, never inline in code.
+- Numbers: in the Spec's Numbers table with a tolerance, then in `content/`, never inline in code.
 - Assets: any binary in `assets/` must have an entry in `assets-src/manifest.yaml` (license, commercial_ok, approval; plus tool, model, prompt_file, seed when generated — see the `asset-pipeline` skill). No entry → CI fails.
 
 ## Repo map
@@ -45,9 +59,9 @@ Full plan: project doc "Tech Stack and SDLC Plan". Design: `docs/gdd.md`. Decisi
 src/IronPipeline.Sim        rules (no Godot)        src/IronPipeline.Sim.Tests  xUnit + FsCheck
 src/IronPipeline.Tools      replay/validate/selfplay CLI
 src/IronPipeline.Game       Godot 4.7 project (opens with Godot .NET; Godot generates its own .sln here)
-docs/gdd.md  docs/adr/  docs/specs/  docs/playtest/
+docs/gdd.md  docs/adr/  docs/specs/ (Spec .md)  features/ (Gherkin)  plans/  docs/playtest/  docs/handoff/
 content/  assets/  assets-src/  scripts/  .github/workflows/
-.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, godot-presentation, asset-pipeline, playtest-checklist
+.claude/skills/   shared knowledge: determinism-rules, wargame-domain, spec-format, test-conventions, godot-presentation, asset-pipeline, playtest-checklist
 .claude/agents/   isolated read-only reviewers that preload those skills
 ```
 
