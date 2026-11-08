@@ -110,7 +110,7 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | Never promote (no tags or publishing by agents) | `judgment:review-process-drift` |
 | Anything that went wrong uses `root-cause-fix` | `judgment:review-process-drift` (fix/bug/incident PR body needs Cause / Cause fix / Check) |
 | Every rule has a check or a `judgment:` tag | `judgment:review-process-drift` |
-| Tests: one per scenario, `S<NN>_` naming, seeded state, no sleeps; property tests for invariants; golden replays | `judgment:review-determinism` (+ `judgment:review-save-and-replay-compat` for replays) |
+| Tests: one per scenario, `S<NN>_` naming, seeded state, no sleeps, never assert on engine internals; property tests for invariants; golden replays | `judgment:review-determinism` (+ `judgment:review-save-and-replay-compat` for replays) |
 | Tests: no coverage targets | `judgment:review-process-drift` |
 | `scripts/verify.sh` before every PR | CI runs `scripts/verify.sh` (`.github/workflows/ci.yml`) |
 | Process-only PRs include `review-process-drift` | pre-PR gate hook + `judgment:review-process-drift` |
@@ -123,6 +123,9 @@ Every rule-shaped statement above, with what enforces it. `judgment:<agent>` = n
 | Code review once all scenarios are green, before cleanup; review fixes in their own commit | `judgment:review-process-drift` |
 | `Status: implemented` set in Spec and Features in the PR's final commit | `judgment:review-process-drift` |
 | Repowise block: unstaged during work, committed alone as `chore(repowise)` | `scripts/check-budget.sh` (does not count it) + `judgment:review-process-drift` |
+| Branch id `0000` reserved for process-only work (no Spec) | `scripts/check-spec-ids.sh` + `judgment:review-process-drift` |
+| Planned work: one branch (`NNNN-<name>-sN`) and one PR per slice | `judgment:review-process-drift` |
+| `/playtest-checklist NNNN` once reviews pass (planned, player-facing PRs) | `judgment:review-process-drift` |
 | Budget exceeded: stop, write Deferred, open issues, escalate | `scripts/check-budget.sh` + `judgment:review-process-drift` |
 | One standing "needs a person" issue collects playtests and visual checks | `judgment:review-process-drift` |
 | Small commits on a spec branch (`NNNN-<name>`); trunk always green | CI runs `scripts/verify.sh` + `judgment:review-process-drift` |
