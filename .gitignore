@@ -31,7 +31,7 @@ assets-src/out/
 /memory/
 /reports/
 /metrics/
-/plans/
+# /plans/ is NOT ignored: Iron Pipeline keeps /dev-team:plan output in plans/ (ADR 0005). .claude/plans/ stays ignored.
 .pr-review-passed
 
 # dev-team hygiene — machine-specific MCP config (absolute-path pollution — issues #1376, #1416)
@@ -39,3 +39,5 @@ assets-src/out/
 .claude/code-intelligence-turn-state.json*
 
 !.vscode/settings.json
+# local scratch (patches, notes, downloaded analyses); never committed
+tmp/

@@ -10,7 +10,7 @@ Authoritative agent instructions live in the root `CLAUDE.md` (architecture rule
 
 ## Commands
 ```bash
-scripts/verify.sh                                   # format check, build, test, boundary + determinism checks (CI runs this)
+scripts/verify.sh                                   # format, build, test, boundary, determinism, asset-manifest, stale-refs, budget (CI runs this)
 dotnet format IronPipeline.sln                       # fix formatting
 dotnet build IronPipeline.sln -c Release
 dotnet test IronPipeline.sln -c Release --no-build

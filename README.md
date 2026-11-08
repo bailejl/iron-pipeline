@@ -3,7 +3,7 @@
 A turn-based hex wargame about modern-era combined arms where logistics is the game.
 Godot 4.7 (.NET) + C#. Windows and Linux. Built with an AI-agent-driven process.
 
-- Design: [`docs/gdd.md`](docs/gdd.md) · Decisions: [`docs/adr/`](docs/adr/) · Specs: [`docs/specs/`](docs/specs/)
+- Design: [`docs/gdd.md`](docs/gdd.md) · Decisions: [`docs/adr/`](docs/adr/) · Specs: [`docs/specs/`](docs/specs/) · Features (Gherkin): [`features/`](features/) · Plans: [`plans/`](plans/)
 - Agent manual: [`CLAUDE.md`](CLAUDE.md) · Agents: [`.claude/agents/`](.claude/agents/)
 - Full plan: project doc *Iron Pipeline — Tech Stack & SDLC Plan*
 
@@ -13,11 +13,13 @@ src/IronPipeline.Sim         game rules — plain .NET library, never references
 src/IronPipeline.Sim.Tests   xUnit acceptance tests (one per spec scenario) + FsCheck properties
 src/IronPipeline.Tools       CLI: replay runner, content validator, self-play (stubs for now)
 src/IronPipeline.Game        Godot 4.7 project — presentation only
-docs/                        gdd, adr, specs (Gherkin), playtest notes
+docs/                        gdd, adr, specs (.md), playtest, handoff
+features/                    Gherkin, one file per spec
+plans/                       /dev-team:plan output for planned-size work
 content/                     units/terrain/factions/scenarios as YAML + schemas   (all rights reserved)
 assets/                      final PNG/OGG via Git LFS                            (all rights reserved)
 assets-src/                  prompts + provenance manifest (Steam AI disclosure record)
-scripts/verify.sh            the one command: format, build, test, boundary + determinism checks
+scripts/verify.sh            the one command: boundary, determinism, manifest, stale-refs, budget, then format, build, test
 ```
 `IronPipeline.sln` at the root is the **headless** solution (Sim, Tests, Tools). It builds and tests
 without Godot. The Game project is opened with the Godot .NET editor, which generates its own solution.
@@ -46,15 +48,15 @@ Windows testing without Windows: add the exported `.exe` from the `build` workfl
 force Proton.
 
 ## Workflow (short version — see CLAUDE.md)
-1. Feature → `docs/specs/NNNN-*.feature` → spec reviewers → **you approve**.
+1. Change → Spec `docs/specs/NNNN-*.md` + Features `features/NNNN-*.feature` → (planned: spec reviewers) → **you approve**.
 2. Coding agent: code-first small batches, refactor every batch, tests frozen during refactor.
 3. `scripts/verify.sh` → code reviewers → playtest checklist → PR → **you playtest the exported build** → merge.
-Small tasks skip the reviewers and go straight to `verify.sh`.
+Small tasks skip the reviewers and the plan and go straight to `verify.sh`. Budgets are enforced; past budget = stop, defer to issues, escalate.
 
 ## CI
 | Workflow | When | What |
 |---|---|---|
-| `ci` | every push/PR | `scripts/verify.sh`; Godot import + build |
+| `ci` | every push/PR | `scripts/verify.sh` (full history checkout for the budget check); Godot import + build |
 | `build` | `main`, nightly | Linux + Windows exports; Windows launch smoke test |
 | `nightly` | nightly | self-play balance report (stub) |
 | `weekly` | Mondays | Stryker.NET mutation report (health metric) |

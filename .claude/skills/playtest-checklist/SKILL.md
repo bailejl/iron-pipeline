@@ -1,12 +1,12 @@
 ---
 name: playtest-checklist
-description: Write the human playtest checklist for a feature PR from its spec and diff, saved under docs/playtest/. Invoke as /playtest-checklist <spec number> once reviews pass on a feature PR.
+description: Write the human playtest checklist for a planned-size, player-facing PR from its Spec, Features and diff, saved under docs/playtest/. Invoke as /playtest-checklist <spec number> once reviews pass.
 ---
 # /playtest-checklist <NNNN>
 
 Produce `docs/playtest/<NNNN>-<name>-<YYYY-MM-DD>.md` from `docs/playtest/TEMPLATE.md`.
 
-Inputs: the spec `docs/specs/<NNNN>-*.feature`, the PR diff, `docs/gdd.md` pillars.
+Inputs: `docs/specs/<NNNN>-*.md`, `features/<NNNN>-*.feature`, the PR diff, `docs/gdd.md` pillars.
 
 Write **5–10 checks** a player can do in the exported build in under 15 minutes. Each check names:
 1. the exact action (which unit, which hex, which button),

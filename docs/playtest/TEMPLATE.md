@@ -1,8 +1,8 @@
-# Playtest — <feature> — <date>
+# Playtest — <spec NNNN name> — <date>
 
 Build: <CI run / commit>. Platform: <Mac / Bazzite native / Proton>.
 
-## Checklist (written by the playtest-checklist-writer agent)
+## Checklist (written by `/playtest-checklist NNNN`)
 - [ ] ...
 
 ## What happened

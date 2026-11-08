@@ -1,7 +1,6 @@
-# Spec 0001 — Hex coordinates
+# Features 0001 — Hex coordinates
+# Spec: docs/specs/0001-hex-coordinates.md
 # Status: implemented
-# Pillar(s): big maps, readable tactics
-# Size: small
 
 Feature: Hex coordinates
   As the sim

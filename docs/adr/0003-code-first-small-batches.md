@@ -1,6 +1,6 @@
 # ADR 0003 — Code-first small batches, single coding agent, mandatory refactor
 
-**Status:** accepted · **Date:** 2026-11-07
+**Status:** accepted · **Date:** 2026-11-07 · **Amended by:** ADR 0005 (decision 5: task sizes are now `small` / `planned`; every change has a Spec and a Features file; budgets)
 
 ## Context
 The `dev-team` experiments (bdfinst/agentic-dev-team, docs/experiments 01–05) found: test-first ordering alone buys nothing; refactor-after-green is the mechanism; code-first small batches with one agent won on quality-per-dollar; split coder/tester agents cost ~3× for no gain; no workflow recovers what a spec never stated; coverage/mutation are blind to workflow quality; pipeline overhead shrinks as tasks grow.

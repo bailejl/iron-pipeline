@@ -11,10 +11,12 @@ concurrency:
 
 jobs:
   sim:
-    name: sim (format, build, test, boundary, determinism)
+    name: sim (verify.sh — format, build, test, boundary, determinism, manifest, stale-refs, budget)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # check-budget.sh needs main's history
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
